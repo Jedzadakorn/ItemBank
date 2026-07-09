@@ -3,1344 +3,1143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>คลังข้อสอบออนไลน์ - ระบบบริหารจัดการสถานศึกษา</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>ระบบคลังข้อสอบออนไลน์ โรงเรียนทนาพรวิทยา</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght=200;300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    
     <style>
-        body { font-family: 'Kanit', sans-serif; }
-        .glass { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #f8fafc;
+        }
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+        }
         .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         .slide-up { animation: slideUp 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
-<body class="bg-gray-50 text-slate-800 antialiased min-h-screen relative pb-32 md:pb-16">
+<body class="text-slate-800 antialiased overflow-x-hidden pt-16 flex flex-col min-h-screen">
 
-    <div id="global-loader" class="fixed inset-0 bg-white/80 z-50 flex flex-col items-center justify-center hidden">
-        <div class="animate-spin rounded-full h-12 w-12 border-4 border-indigo-600 border-t-transparent"></div>
-        <p class="mt-4 text-indigo-600 font-medium">กำลังดำเนินการ...</p>
+    <div id="global-loader" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[9999] flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded-2xl shadow-xl flex flex-col items-center gap-4">
+            <div class="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-sm font-medium text-slate-600">กำลังประมวลผล...</p>
+        </div>
     </div>
 
-    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <div id="toast-box" class="fixed top-20 right-5 z-[999] flex flex-col gap-2"></div>
 
-    <div id="section-landing" class="fade-in">
-        <div class="relative overflow-hidden bg-slate-900 text-white py-20 px-6 text-center">
-            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center opacity-20"></div>
-            <div class="relative max-w-4xl mx-auto glass rounded-2xl p-8 md:p-12 text-slate-900 shadow-xl border border-white/20 slide-up">
-                <div class="flex justify-center mb-6">
-                    <div class="flex items-center justify-center w-24 h-24">
-                        <img src="https://jedzadakorn.github.io/ItemBank/images/logo.png" alt="Logo" class="w-full h-full object-contain">
-                    </div>
-                </div>
-                
-                <span class="bg-indigo-100 text-indigo-800 text-sm font-semibold px-4 py-1.5 rounded-full uppercase tracking-wider">โรงเรียนทนาพรวิทยา</span>
-                <h1 class="text-3xl md:text-5xl font-bold mt-4 mb-3 text-slate-900">คลังข้อสอบออนไลน์</h1>
-                <p class="text-slate-600 max-w-2xl mx-auto text-base md:text-lg">
-                    ระบบรวบรวม และจัดเก็บข้อสอบมาตรฐาน แยกตามระดับชั้น และ 8 กลุ่มสาระการเรียนรู้<br>สำหรับผู้บริหารและครูผู้สอน
-                </p>
-                <div class="mt-8 flex justify-center gap-4">
-                    <button onclick="switchView('login')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-8 py-3 rounded-xl transition duration-300 transform hover:scale-105 shadow-md flex items-center gap-2">
-                        <i data-lucide="log-in" class="w-5 h-5"></i> เข้าสู่ระบบใช้งาน
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <div class="max-w-7xl mx-auto px-4 py-12">
-            <h2 class="text-2xl font-bold mb-6 text-slate-800 flex items-center gap-2">
-                <i data-lucide="bar-chart-3" class="text-indigo-600"></i> สถิติภาพรวมคลังข้อสอบปัจจุบัน
-            </h2>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                    <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl"><i data-lucide="file-text" class="w-6 h-6"></i></div>
-                    <div>
-                        <p class="text-xs text-gray-500 font-medium">ข้อสอบทั้งหมด</p>
-                        <h3 id="stat-total-exams" class="text-2xl font-bold text-slate-800">0</h3>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><i data-lucide="layers" class="w-6 h-6"></i></div>
-                    <div>
-                        <p class="text-xs text-gray-500 font-medium">ระดับประถม (ป.1-ป.6)</p>
-                        <h3 id="stat-primary-exams" class="text-2xl font-bold text-slate-800">0</h3>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
-                    <div class="p-3 bg-amber-50 text-amber-600 rounded-xl"><i data-lucide="graduation-cap" class="w-6 h-6"></i></div>
-                    <div>
-                        <p class="text-xs text-gray-500 font-medium">ระดับมัธยม (ม.1-ม.3)</p>
-                        <h3 id="stat-secondary-exams" class="text-2xl font-bold text-slate-800">0</h3>
-                    </div>
-                </div>
-            </div>
-
-            <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">จำนวนไฟล์ข้อสอบแยกตามกลุ่มสาระการเรียนรู้</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs text-gray-500 font-medium">ภาษาไทย</span>
-                    <h4 id="stat-subject-th" class="text-xl font-bold text-slate-800 mt-2">0 <span class="text-xs font-normal text-gray-400">ไฟล์</span></h4>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs text-gray-500 font-medium">คณิตศาสตร์</span>
-                    <h4 id="stat-subject-math" class="text-xl font-bold text-slate-800 mt-2">0 <span class="text-xs font-normal text-gray-400">ไฟล์</span></h4>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs text-gray-500 font-medium">วิทยาศาสตร์และเทคโนโลยี</span>
-                    <h4 id="stat-subject-sci" class="text-xl font-bold text-slate-800 mt-2">0 <span class="text-xs font-normal text-gray-400">ไฟล์</span></h4>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs text-gray-500 font-medium">สังคมศึกษา ศาสนาฯ</span>
-                    <h4 id="stat-subject-soc" class="text-xl font-bold text-slate-800 mt-2">0 <span class="text-xs font-normal text-gray-400">ไฟล์</span></h4>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs text-gray-500 font-medium">สุขศึกษาและพลศึกษา</span>
-                    <h4 id="stat-subject-health" class="text-xl font-bold text-slate-800 mt-2">0 <span class="text-xs font-normal text-gray-400">ไฟล์</span></h4>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs text-gray-500 font-medium">ศิลปะ</span>
-                    <h4 id="stat-subject-art" class="text-xl font-bold text-slate-800 mt-2">0 <span class="text-xs font-normal text-gray-400">ไฟล์</span></h4>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs text-gray-500 font-medium">การงานอาชีพ</span>
-                    <h4 id="stat-subject-career" class="text-xl font-bold text-slate-800 mt-2">0 <span class="text-xs font-normal text-gray-400">ไฟล์</span></h4>
-                </div>
-                <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs text-gray-500 font-medium">ภาษาต่างประเทศ</span>
-                    <h4 id="stat-subject-foreign" class="text-xl font-bold text-slate-800 mt-2">0 <span class="text-xs font-normal text-gray-400">ไฟล์</span></h4>
-                </div>
-            </div>
-
-            <h3 class="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">จำนวนไฟล์ข้อสอบแยกตามระดับชั้น</h3>
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-9 gap-3 mb-8">
-                <div class="bg-white p-3.5 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs text-slate-600 font-medium">ประถมศึกษาปีที่ 1</span>
-                    <h4 id="stat-grade-p1" class="text-lg font-bold text-indigo-600 mt-2">0 <span class="text-[10px] font-normal text-gray-400">ไฟล์</span></h4>
-                </div>
-                <div class="bg-white p-3.5 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs text-slate-600 font-medium">ประถมศึกษาปีที่ 2</span>
-                    <h4 id="stat-grade-p2" class="text-lg font-bold text-indigo-600 mt-2">0 <span class="text-[10px] font-normal text-gray-400">ไฟล์</span></h4>
-                </div>
-                <div class="bg-white p-3.5 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs text-slate-600 font-medium">ประถมศึกษาปีที่ 3</span>
-                    <h4 id="stat-grade-p3" class="text-lg font-bold text-indigo-600 mt-2">0 <span class="text-[10px] font-normal text-gray-400">ไฟล์</span></h4>
-                </div>
-                <div class="bg-white p-3.5 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs text-slate-600 font-medium">ประถมศึกษาปีที่ 4</span>
-                    <h4 id="stat-grade-p4" class="text-lg font-bold text-indigo-600 mt-2">0 <span class="text-[10px] font-normal text-gray-400">ไฟล์</span></h4>
-                </div>
-                <div class="bg-white p-3.5 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs text-slate-600 font-medium">ประถมศึกษาปีที่ 5</span>
-                    <h4 id="stat-grade-p5" class="text-lg font-bold text-indigo-600 mt-2">0 <span class="text-[10px] font-normal text-gray-400">ไฟล์</span></h4>
-                </div>
-                <div class="bg-white p-3.5 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between">
-                    <span class="text-xs text-slate-600 font-medium">ประถมศึกษาปีที่ 6</span>
-                    <h4 id="stat-grade-p6" class="text-lg font-bold text-indigo-600 mt-2">0 <span class="text-[10px] font-normal text-gray-400">ไฟล์</span></h4>
-                </div>
-                <div class="bg-white p-3.5 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between bg-amber-50/20 border-amber-100">
-                    <span class="text-xs text-amber-800 font-medium">มัธยมศึกษาปีที่ 1</span>
-                    <h4 id="stat-grade-m1" class="text-lg font-bold text-amber-700 mt-2">0 <span class="text-[10px] font-normal text-amber-600">ไฟล์</span></h4>
-                </div>
-                <div class="bg-white p-3.5 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between bg-amber-50/20 border-amber-100">
-                    <span class="text-xs text-amber-800 font-medium">มัธยมศึกษาปีที่ 2</span>
-                    <h4 id="stat-grade-m2" class="text-lg font-bold text-amber-700 mt-2">0 <span class="text-[10px] font-normal text-amber-600">ไฟล์</span></h4>
-                </div>
-                <div class="bg-white p-3.5 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-between bg-amber-50/20 border-amber-100">
-                    <span class="text-xs text-amber-800 font-medium">มัธยมศึกษาปีที่ 3</span>
-                    <h4 id="stat-grade-m3" class="text-lg font-bold text-amber-700 mt-2">0 <span class="text-[10px] font-normal text-amber-600">ไฟล์</span></h4>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-semibold mb-4">กราฟแจกแจงจำนวนไฟล์ข้อสอบตามกลุ่มสาระการเรียนรู้</h3>
-                    <div class="h-64 relative">
-                        <canvas id="guestOverviewChart"></canvas>
-                    </div>
-                </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-                    <h3 class="text-lg font-semibold mb-4">กราฟแจกแจงจำนวนไฟล์ข้อสอบตามระดับชั้น</h3>
-                    <div class="h-64 relative">
-                        <canvas id="guestGradeChart"></canvas>
-                    </div>
-                </div>
+    <div id="logout-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[900] flex items-center justify-center hidden p-4">
+        <div class="bg-white p-6 rounded-2xl shadow-xl max-w-sm w-full slide-up">
+            <h3 class="text-lg font-bold text-slate-900 mb-2">ยืนยันการออกจากระบบ?</h3>
+            <p class="text-sm text-slate-500 mb-6">คุณจำเป็นต้องเข้าสู่ระบบใหม่อีกครั้งหากต้องการแก้ไขหรือเพิ่มข้อสอบ</p>
+            <div class="flex gap-3 justify-end">
+                <button onclick="toggleModal('logout-modal', false)" class="px-4 py-2 text-sm font-medium text-slate-500 hover:bg-slate-100 rounded-xl transition">ยกเลิก</button>
+                <button onclick="processLogout()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-xl transition">ออกจากระบบ</button>
             </div>
         </div>
     </div>
 
-
-    <div id="section-login" class="hidden min-h-screen flex items-center justify-center px-4 bg-slate-900">
-        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md slide-up">
-            <div class="text-center mb-6">
-                <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <i data-lucide="shield-check" class="w-8 h-8"></i>
+    <div id="user-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[900] flex items-center justify-center hidden p-4">
+        <div class="bg-white p-6 rounded-2xl shadow-xl max-w-md w-full slide-up">
+            <h3 id="user-modal-title" class="text-lg font-bold text-slate-900 mb-4">เพิ่มผู้ใช้งานใหม่</h3>
+            <form id="form-user-data" onsubmit="saveUserDocument(event)" class="flex flex-col gap-4">
+                <input type="hidden" id="fx-user-id">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-slate-500">ชื่อผู้ใช้งาน (Username) <span class="text-red-500">*</span></label>
+                    <input type="text" id="fx-user-username" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-indigo-600 transition">
                 </div>
-                <h2 class="text-2xl font-bold text-slate-900">เข้าสู่ระบบคลังข้อสอบ</h2>
-                <p class="text-sm text-gray-500 mt-1">กรอกข้อมูลส่วนบุคคลที่โรงเรียนออกให้เพื่อดำเนินการต่อ</p>
-            </div>
-            
-            <form id="form-login" onsubmit="handleCustomLogin(event)">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อผู้ใช้งาน (Username)</label>
-                        <div class="relative">
-                            <i data-lucide="user" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
-                            <input type="text" id="login-username" required class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm transition" placeholder="เช่น admin01 หรือ teacher01">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">รหัสผ่าน (Password)</label>
-                        <div class="relative">
-                            <i data-lucide="lock" class="absolute left-3 top-3 w-5 h-5 text-gray-400"></i>
-                            <input type="password" id="login-password" required class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-sm transition" placeholder="••••••••">
-                        </div>
-                    </div>
-                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-xl transition duration-300 shadow-md mt-2 flex items-center justify-center gap-2">
-                        <i data-lucide="log-in" class="w-4 h-4"></i> เข้าสู่ระบบคลังข้อมูล
-                    </button>
+                <div class="flex flex-col gap-1.5" id="fx-user-password-container">
+                    <label class="text-xs font-semibold text-slate-500">รหัสผ่าน (Password) <span class="text-red-500">*</span></label>
+                    <input type="password" id="fx-user-password" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-indigo-600 transition">
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-slate-500">ชื่อ-นามสกุลจริง <span class="text-red-500">*</span></label>
+                    <input type="text" id="fx-user-fullname" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-indigo-600 transition">
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-slate-500">สิทธิ์การเข้าถึงระบบ <span class="text-red-500">*</span></label>
+                    <select id="fx-user-role" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-indigo-600 transition">
+                        <option value="Teacher">Teacher (ครูผู้สอน)</option>
+                        <option value="Admin">Admin (ผู้ดูแลระบบ)</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 justify-end mt-2">
+                    <button type="button" onclick="toggleModal('user-modal', false)" class="px-4 py-2 text-sm font-medium text-slate-500 hover:bg-slate-100 rounded-xl transition">ยกเลิก</button>
+                    <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl transition">บันทึกข้อมูล</button>
                 </div>
             </form>
-            <button onclick="switchView('landing')" class="w-full text-center text-sm text-gray-500 hover:text-indigo-600 mt-4 transition">← กลับหน้าหลักภายนอก</button>
         </div>
     </div>
 
+    <nav id="global-top-nav" class="glass-nav fixed top-0 inset-x-0 h-16 z-50 transition-all">
+        <div class="max-w-7xl mx-auto h-full px-4 md:px-8 flex items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchPage('landing')">
+                <div class="w-9 h-9 rounded-xl flex items-center justify-center shadow-xs overflow-hidden bg-white">
+                    <img src="https://schooladmin.click/ItemBank/images/logo.png" alt="School Logo" class="w-full h-full object-contain">
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-[10px] font-bold tracking-wider text-blue-600 uppercase leading-none">ระบบคลังข้อสอบออนไลน์</span>
+                    <h1 class="text-sm font-bold text-slate-800 mt-0.5">โรงเรียนทนาพรวิทยา</h1>
+                </div>
+            </div>
+            <div class="hidden md:flex items-center gap-1 bg-slate-500/5 p-1 rounded-xl border border-slate-200/40" id="desktop-menu-list"></div>
+            <div class="flex items-center gap-3">
+                <div id="nav-user-card" class="hidden items-center gap-2 px-3 py-1 bg-slate-500/5 rounded-xl border border-slate-200/50">
+                    <div class="w-7 h-7 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs" id="nav-user-avatar">U</div>
+                    <div class="hidden lg:block text-left">
+                        <p class="text-xs font-semibold text-slate-800 leading-none truncate max-w-[100px]" id="nav-user-name">Guest</p>
+                        <p class="text-[9px] text-slate-400 font-bold uppercase mt-0.5" id="nav-user-role">VIEWER</p>
+                    </div>
+                </div>
+                <button id="btn-top-auth" onclick="switchPage('landing')" class="flex items-center gap-2 px-4 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-xs">
+                    <i data-lucide="home" class="w-3.5 h-3.5"></i> หน้าแรก
+                </button>
+            </div>
+        </div>
+    </nav>
 
-    <div id="section-app" class="hidden min-h-screen flex flex-col md:flex-row">
+    <main id="main-content-area" class="flex-1 flex flex-col w-full mx-auto pb-24 md:pb-8">
         
-        <aside id="sidebar" class="hidden md:flex flex-col w-64 bg-slate-900 text-slate-300 h-screen sticky top-0 flex-shrink-0 z-30">
-            <div class="p-6 border-b border-slate-800 flex items-center gap-3">
-                <div class="p-2 bg-indigo-600 text-white rounded-xl"><i data-lucide="box" class="w-5 h-5"></i></div>
-                <div>
-                    <h2 class="text-white font-bold leading-tight">คลังข้อสอบออนไลน์</h2>
-                    <span id="user-badge" class="text-xs bg-indigo-900/50 text-indigo-400 px-2 py-0.5 rounded border border-indigo-800">Teacher</span>
-                </div>
+        <div class="max-w-7xl w-full mx-auto px-4 md:px-8 mt-6 mb-2 flex justify-between items-center border-b border-slate-100 pb-3 hidden" id="sub-page-header">
+            <div class="flex items-center gap-2">
+                <i data-lucide="layout-dashboard" class="w-5 h-5 text-blue-600" id="title-icon"></i>
+                <span id="page-title" class="text-lg font-bold text-slate-700"></span>
             </div>
+        </div>
+
+        <div class="flex-1 w-full">
             
-            <div class="p-4 mx-3 my-4 bg-slate-800/50 rounded-xl border border-slate-800">
-                <p class="text-xs text-gray-400">ยินดีต้อนรับผู้ใช้</p>
-                <p id="user-display-name" class="text-sm font-medium text-white truncate">-</p>
-            </div>
-
-            <nav class="flex-1 px-3 space-y-1">
-                <button onclick="switchAppTab('dashboard')" id="side-tab-dashboard" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm transition bg-indigo-600 text-white"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> แดชบอร์ดผู้บริหาร</button>
-                <button onclick="switchAppTab('exams')" id="side-tab-exams" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm transition hover:bg-slate-800 text-slate-400 hover:text-white"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> คลัง/จัดการเอกสารข้อสอบ</button>
-                <button onclick="switchAppTab('users')" id="side-tab-users" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm transition hover:bg-slate-800 text-slate-400 hover:text-white admin-only"><i data-lucide="users" class="w-4 h-4"></i> จัดการสิทธิ์ผู้ใช้งาน</button>
-                <button onclick="openChangePasswordModal()" id="side-tab-password" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm transition hover:bg-slate-800 text-slate-400 hover:text-white"><i data-lucide="key-round" class="w-4 h-4"></i> เปลี่ยน Password</button>
-            </nav>
-
-            <div class="p-4 border-t border-slate-800">
-                <button onclick="openLogoutModal()" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-red-400 hover:bg-red-950/30 font-medium text-sm transition"><i data-lucide="log-out" class="w-4 h-4"></i> ออกจากระบบ</button>
-            </div>
-        </aside>
-
-        <main class="flex-1 min-w-0 bg-gray-50">
-            <header class="md:hidden bg-slate-900 text-white p-4 flex items-center justify-between sticky top-0 z-30 shadow-md">
-                <div class="flex items-center gap-2">
-                    <div class="p-1.5 bg-indigo-600 rounded-lg"><i data-lucide="box" class="w-5 h-5"></i></div>
-                    <span class="font-bold text-sm truncate" id="mobile-header-title">คลังข้อสอบออนไลน์</span>
-                </div>
-                <div class="text-right">
-                    <p id="mobile-user-name" class="text-xs text-slate-300 truncate max-w-[120px] font-medium">-</p>
-                    <span id="mobile-user-role" class="text-[10px] bg-slate-800 px-1.5 py-0.2 rounded text-indigo-400 border border-slate-700">Role</span>
-                </div>
-            </header>
-
-            <div class="p-4 md:p-8 max-w-7xl mx-auto">
+            <section id="page-landing" class="view-section fade-in w-full min-h-[calc(100vh-4rem)] bg-linear-to-br from-slate-50 via-blue-50/30 to-blue-100/40 relative flex items-center">
+                <div class="absolute top-0 right-0 w-1/2 h-full bg-blue-600/10 clip-path rounded-l-[100px] pointer-events-none hidden lg:block"></div>
                 
-                <div id="tab-dashboard" class="space-y-6 fade-in">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
-                            <h2 class="text-2xl font-bold text-slate-900">ระบบสรุปสารสนเทศผู้บริหาร (Dashboard)</h2>
-                            <p class="text-sm text-gray-500">รายงานข้อมูลแจกแจงไฟล์เอกสาร (doc/pdf) แยกตามกลุ่มสาระการเรียนรู้ และระดับชั้น ป.1 - ม.3</p>
+                <div class="max-w-7xl w-full mx-auto px-4 md:px-8 py-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+                    
+                    <div class="lg:col-span-7 flex flex-col gap-6 text-center lg:text-left items-center lg:items-start">
+                        <div class="flex items-center gap-4 mb-2">
+                            <div class="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-lg overflow-hidden p-1">
+                                <img src="https://schooladmin.click/ItemBank/images/logo.png" alt="โรงเรียนทนาพรวิทยา โลโก้" class="w-full h-full object-contain">
+                            </div>
+                            <div class="flex flex-col text-left">
+                                <h2 class="text-xl font-bold tracking-wide text-blue-900 leading-tight">โรงเรียนทนาพรวิทยา</h2>
+                                <p class="text-xs text-slate-500 font-medium tracking-widest uppercase">THANAPORNWITTAYA SCHOOL</p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-3">
+                            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
+                                ระบบคลังข้อสอบออนไลน์ <br>
+                                <span class="text-blue-600">โรงเรียนทนาพรวิทยา</span>
+                            </h1>
+                            <div class="w-16 h-1 bg-blue-600 rounded-full my-1 mx-auto lg:mx-0"></div>
+                            <p class="text-slate-600 text-sm md:text-base font-normal max-w-xl leading-relaxed">
+                                รวมเอกสารข้อสอบ พร้อมเฉลย ทุกกลุ่มสาระการเรียนรู้ ระดับชั้นประถมศึกษา และมัธยมศึกษาตอนต้น ตามหลักสูตรแกนกลางการศึกษาขั้นพื้นฐาน พุทธศักราช 2551 (ฉบับปรับปรุง พ.ศ. 2560)
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mt-4">
+                            <div class="bg-white/80 backdrop-blur-xs p-4 rounded-2xl border border-slate-200/60 shadow-xs flex flex-col items-center lg:items-start text-center lg:text-left gap-2">
+                                <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center"><i data-lucide="folder-heart" class="w-5 h-5"></i></div>
+                                <h3 class="text-xs font-bold text-slate-800">จัดเก็บเป็นระบบ</h3>
+                                <p class="text-[11px] text-slate-400">ค้นหาง่าย แยกหมวดหมู่ชัดเจน</p>
+                            </div>
+                            <div class="bg-white/80 backdrop-blur-xs p-4 rounded-2xl border border-slate-200/60 shadow-xs flex flex-col items-center lg:items-start text-center lg:text-left gap-2">
+                                <div class="w-10 h-10 bg-cyan-50 text-cyan-600 rounded-xl flex items-center justify-center"><i data-lucide="search-code" class="w-5 h-5"></i></div>
+                                <h3 class="text-xs font-bold text-slate-800">ค้นหาข้อสอบได้เร็ว</h3>
+                                <p class="text-[11px] text-slate-400">ประหยัดเวลา ค้นหาแบบเรียลไทม์</p>
+                            </div>
+                            <div class="bg-white/80 backdrop-blur-xs p-4 rounded-2xl border border-slate-200/60 shadow-xs flex flex-col items-center lg:items-start text-center lg:text-left gap-2">
+                                <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
+                                <h3 class="text-xs font-bold text-slate-800">มาตรฐานและปลอดภัย</h3>
+                                <p class="text-[11px] text-slate-400">เชื่อถือได้ เอกสารผ่านการคัดกรอง</p>
+                            </div>
+                            <div class="bg-white/80 backdrop-blur-xs p-4 rounded-2xl border border-slate-200/60 shadow-xs flex flex-col items-center lg:items-start text-center lg:text-left gap-2">
+                                <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center"><i data-lucide="bar-chart-3" class="w-5 h-5"></i></div>
+                                <h3 class="text-xs font-bold text-slate-800">รายงานและสถิติ</h3>
+                                <p class="text-[11px] text-slate-400">ใช้งานได้จริง ข้อมูลแจกแจงชัดเจน</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="lg:col-span-5 w-full max-w-md mx-auto">
+                        <div class="bg-white p-8 rounded-3xl shadow-xl border border-slate-200/50 flex flex-col gap-6 relative overflow-hidden">
+                            <div class="absolute top-0 inset-x-0 h-1.5 bg-linear-to-r from-blue-500 to-indigo-600"></div>
+                            
+                            <div class="flex flex-col items-center text-center gap-2">
+                                <div class="w-14 h-14 border border-blue-500/30 text-blue-600 rounded-full flex items-center justify-center shadow-xs">
+                                    <i data-lucide="lock" class="w-6 h-6"></i>
+                                </div>
+                                <h2 class="text-2xl font-bold text-slate-800 mt-2">เข้าสู่ระบบ</h2>
+                                <p class="text-xs text-slate-400 font-medium">กรุณาเข้าสู่ระบบเพื่อใช้งาน</p>
+                            </div>
+
+                            <form id="form-login" onsubmit="processLogin(event)" class="flex flex-col gap-4">
+                                <div class="flex flex-col gap-1.5 relative">
+                                    <div class="relative">
+                                        <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-4 top-4"></i>
+                                        <input type="text" id="login-username" required class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-blue-600 transition bg-white text-slate-700" placeholder="ชื่อผู้ใช้">
+                                    </div>
+                                </div>
+                                <div class="flex flex-col gap-1.5 relative">
+                                    <div class="relative">
+                                        <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-4 top-4"></i>
+                                        <input type="password" id="login-password" required class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-blue-600 transition bg-white text-slate-700" placeholder="รหัสผ่าน">
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="w-full py-3.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow-md transition-all mt-4 flex items-center justify-center cursor-pointer">
+                                    เข้าสู่ระบบ
+                                </button>
+                            </form>
+
+                            <div class="relative flex py-1 items-center">
+                                <div class="flex-grow border-t border-slate-200"></div>
+                                <span class="flex-shrink mx-4 text-slate-400 text-xs font-semibold">หรือ</span>
+                                <div class="flex-grow border-t border-slate-200"></div>
+                            </div>
+
+                            <p class="text-center text-xs text-slate-500 font-medium">
+                                หากมีปัญหาในการเข้าสู่ระบบ <a href="https://line.me/ti/p/v3sDgprQJw" target="_blank" class="text-blue-600 hover:underline font-semibold">ติดต่อผู้ดูแลระบบ</a>
+                            </p>
+                        </div>
+                    </div>
+                    
+                </div>
+            </section>
+
+            <section id="page-dashboard" class="view-section max-w-7xl w-full mx-auto px-4 md:px-8 py-6 fade-in hidden flex flex-col gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3"><h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-indigo-600"></span> จำนวนข้อสอบกลุ่มสาระการเรียนรู้ภาษาไทย จำแนกตามระดับชั้น</h3><div class="relative h-56"><canvas id="chart-thai"></canvas></div></div>
+                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3"><h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-600"></span> จำนวนข้อสอบกลุ่มสาระการเรียนรู้คณิตศาสตร์ จำแนกตามระดับชั้น</h3><div class="relative h-56"><canvas id="chart-math"></canvas></div></div>
+                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3"><h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-600"></span> จำนวนข้อสอบกลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี จำแนกตามระดับชั้น</h3><div class="relative h-56"><canvas id="chart-science"></canvas></div></div>
+                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3"><h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-600"></span> จำนวนข้อสอบกลุ่มสาระการเรียนรู้สังคมศึกษาฯ จำแนกตามระดับชั้น</h3><div class="relative h-56"><canvas id="chart-social"></canvas></div></div>
+                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3"><h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-red-600"></span> จำนวนข้อสอบกลุ่มสาระการเรียนรู้สุขศึกษาและพลศึกษา จำแนกตามระดับชั้น</h3><div class="relative h-56"><canvas id="chart-health"></canvas></div></div>
+                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3"><h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-purple-600"></span> จำนวนข้อสอบกลุ่มสาระการเรียนรู้ศิลปะ จำแนกตามระดับชั้น</h3><div class="relative h-56"><canvas id="chart-arts"></canvas></div></div>
+                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3"><h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-orange-600"></span> จำนวนข้อสอบกลุ่มสาระการเรียนรู้การงานอาชีพ จำแนกตามระดับชั้น</h3><div class="relative h-56"><canvas id="chart-career"></canvas></div></div>
+                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3"><h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-teal-600"></span> จำนวนข้อสอบกลุ่มสาระการเรียนรู้ภาษาต่างประเทศ จำแนกตามระดับชั้น</h3><div class="relative h-56"><canvas id="chart-foreign"></canvas></div></div>
+                </div>
+            </section>
+
+            <section id="page-archive" class="view-section max-w-7xl w-full mx-auto px-4 md:px-8 py-6 fade-in hidden flex flex-col gap-6">
+                <div class="bg-white p-4 md:p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1">กรองจำแนกตามกลุ่มสาระการเรียนรู้</label>
-                            <select id="dash-filter-subject" onchange="renderExecutiveCharts()" class="w-full text-sm border border-gray-200 rounded-xl p-2 outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50">
-                                <option value="All">แสดงทุกกลุ่มสาระการเรียนรู้ (8 กลุ่มสาระ)</option>
+                            <select id="archive-filter-group" onchange="renderArchiveTables()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition bg-white font-medium text-slate-700">
+                                <option value="">ทุกกลุ่มสาระการเรียนรู้</option>
+                                <option value="ภาษาไทย">ภาษาไทย</option>
                                 <option value="คณิตศาสตร์">คณิตศาสตร์</option>
                                 <option value="วิทยาศาสตร์และเทคโนโลยี">วิทยาศาสตร์และเทคโนโลยี</option>
-                                <option value="ภาษาไทย">ภาษาไทย</option>
-                                <option value="ภาษาต่างประเทศ">ภาษาต่างประเทศ</option>
                                 <option value="สังคมศึกษา ศาสนา และวัฒนธรรม">สังคมศึกษา ศาสนา และวัฒนธรรม</option>
                                 <option value="สุขศึกษาและพลศึกษา">สุขศึกษาและพลศึกษา</option>
                                 <option value="ศิลปะ">ศิลปะ</option>
                                 <option value="การงานอาชีพ">การงานอาชีพ</option>
+                                <option value="ภาษาต่างประเทศ">ภาษาต่างประเทศ</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-gray-500 mb-1">กรองจำแนกระดับชั้นกลุ่มโรงเรียน</label>
-                            <select id="dash-filter-grade" onchange="renderExecutiveCharts()" class="w-full text-sm border border-gray-200 rounded-xl p-2 outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50">
-                                <option value="All">ระดับชั้นทั้งหมด (ป.1 - ม.3)</option>
-                                <option value="Primary">ระดับประถมศึกษา (ป.1 - ป.6)</option>
-                                <option value="Secondary">ระดับมัธยมศึกษา (ม.1 - ม.3)</option>
-                                <option value="KeyStage1">ช่วงชั้นที่ 1 (ป.1 - ป.3)</option>
-                                <option value="KeyStage2">ช่วงชั้นที่ 2 (ป.4 - ป.6)</option>
-                                <option value="KeyStage3">ช่วงชั้นที่ 3 (ม.1 - ม.3)</option>
+                            <select id="archive-filter-grade" onchange="renderArchiveTables()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition bg-white font-medium text-slate-700">
+                                <option value="">ทุกระดับชั้น</option>
+                                <option value="ประถมศึกษาปีที่ 1">ประถมศึกษาปีที่ 1</option>
+                                <option value="ประถมศึกษาปีที่ 2">ประถมศึกษาปีที่ 2</option>
+                                <option value="ประถมศึกษาปีที่ 3">ประถมศึกษาปีที่ 3</option>
+                                <option value="ประถมศึกษาปีที่ 4">ประถมศึกษาปีที่ 4</option>
+                                <option value="ประถมศึกษาปีที่ 5">ประถมศึกษาปีที่ 5</option>
+                                <option value="ประถมศึกษาปีที่ 6">ประถมศึกษาปีที่ 6</option>
+                                <option value="มัธยมศึกษาปีที่ 1">มัธยมศึกษาปีที่ 1</option>
+                                <option value="มัธยมศึกษาปีที่ 2">มัธยมศึกษาปีที่ 2</option>
+                                <option value="มัธยมศึกษาปีที่ 3">มัธยมศึกษาปีที่ 3</option>
                             </select>
                         </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
-                            <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-1.5"><i data-lucide="bar-chart-2" class="w-4 h-4 text-indigo-600"></i> จำนวนจำแนกรายระดับชั้น (ป.1 - ม.3)</h3>
-                            <div class="flex-1 min-h-[260px] relative"><canvas id="chartExecutiveGrades"></canvas></div>
-                        </div>
-                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
-                            <h3 class="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-1.5"><i data-lucide="pie-chart" class="w-4 h-4 text-emerald-600"></i> สัดส่วนประเภทนามสกุลไฟล์เอกสารระบบคลัง</h3>
-                            <div class="flex-1 min-h-[260px] relative"><canvas id="chartExecutiveFileTypes"></canvas></div>
+                        <div class="relative">
+                            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3.5"></i>
+                            <input type="text" id="archive-filter-search" oninput="renderArchiveTables()" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition" placeholder="ค้นหารหัสวิชา, ชื่อวิชา, เรื่อง...">
                         </div>
                     </div>
                 </div>
 
-                <div id="tab-exams" class="hidden space-y-6 fade-in">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
-                            <h2 class="text-2xl font-bold text-slate-900">คลังเอกสารจัดเก็บข้อสอบกลาง</h2>
-                            <p class="text-sm text-gray-500">รวมศูนย์ค้นหาคัดกรอง รายละเอียดข้อมูลชี้วัดวิชา และดาวน์โหลดไฟล์เอกสาร</p>
-                        </div>
-                        <button onclick="openExamModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-xl transition shadow flex items-center gap-2 self-start sm:self-auto">
-                            <i data-lucide="plus-circle" class="w-4 h-4"></i> อัปโหลดไฟล์ข้อสอบใหม่
-                        </button>
-                    </div>
+                <div id="archive-tables-container" class="flex flex-col gap-10"></div>
+            </section>
 
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 grid grid-cols-1 md:grid-cols-4 gap-3">
-                        <div class="md:col-span-2 relative">
-                            <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-gray-400"></i>
-                            <input type="text" id="search-exam-keyword" oninput="fetchExams()" class="w-full text-sm pl-9 pr-4 py-2 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500" placeholder="ระบุ คำค้นหา เรื่องที่สอน, หน่วยการเรียนรู้, ตัวชี้วัด...">
+            <section id="page-exams" class="view-section max-w-7xl w-full mx-auto px-4 md:px-8 py-6 fade-in hidden flex flex-col gap-6">
+                <div class="bg-white p-4 md:p-6 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div class="relative">
+                            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3.5"></i>
+                            <input type="text" id="filter-search" oninput="renderExamTable()" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition" placeholder="ค้นหารหัสวิชา, ชื่อวิชา, เรื่อง...">
                         </div>
                         <div>
-                            <select id="filter-exam-subject" onchange="fetchExams()" class="w-full text-sm border border-gray-200 rounded-xl p-2 outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50">
-                                <option value="All">ทุกกลุ่มสาระการเรียนรู้</option>
+                            <select id="filter-group" onchange="renderExamTable()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition bg-white">
+                                <option value="">ทุกกลุ่มสาระการเรียนรู้</option>
+                                <option value="ภาษาไทย">ภาษาไทย</option>
                                 <option value="คณิตศาสตร์">คณิตศาสตร์</option>
                                 <option value="วิทยาศาสตร์และเทคโนโลยี">วิทยาศาสตร์และเทคโนโลยี</option>
-                                <option value="ภาษาไทย">ภาษาไทย</option>
-                                <option value="ภาษาต่างประเทศ">ภาษาต่างประเทศ</option>
                                 <option value="สังคมศึกษา ศาสนา และวัฒนธรรม">สังคมศึกษา ศาสนา และวัฒนธรรม</option>
                                 <option value="สุขศึกษาและพลศึกษา">สุขศึกษาและพลศึกษา</option>
                                 <option value="ศิลปะ">ศิลปะ</option>
                                 <option value="การงานอาชีพ">การงานอาชีพ</option>
+                                <option value="ภาษาต่างประเทศ">ภาษาต่างประเทศ</option>
                             </select>
                         </div>
                         <div>
-                            <select id="filter-exam-grade" onchange="fetchExams()" class="w-full text-sm border border-gray-200 rounded-xl p-2 outline-none focus:ring-2 focus:ring-indigo-500 bg-gray-50">
-                                <option value="All">ทุกระดับชั้น</option>
-                                <option value="ป.1">ป.1</option><option value="ป.2">ป.2</option><option value="ป.3">ป.3</option>
-                                <option value="ป.4">ป.4</option><option value="ป.5">ป.5</option><option value="ป.6">ป.6</option>
-                                <option value="ม.1">ม.1</option><option value="ม.2">ม.2</option><option value="ม.3">ม.3</option>
+                            <select id="filter-grade" onchange="renderExamTable()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition bg-white">
+                                <option value="">ทุกระดับชั้น</option>
+                                <option value="ประถมศึกษาปีที่ 1">ประถมศึกษาปีที่ 1</option>
+                                <option value="ประถมศึกษาปีที่ 2">ประถมศึกษาปีที่ 2</option>
+                                <option value="ประถมศึกษาปีที่ 3">ประถมศึกษาปีที่ 3</option>
+                                <option value="ประถมศึกษาปีที่ 4">ประถมศึกษาปีที่ 4</option>
+                                <option value="ประถมศึกษาปีที่ 5">ประถมศึกษาปีที่ 5</option>
+                                <option value="ประถมศึกษาปีที่ 6">ประถมศึกษาปีที่ 6</option>
+                                <option value="มัธยมศึกษาปีที่ 1">มัธยมศึกษาปีที่ 1</option>
+                                <option value="มัธยมศึกษาปีที่ 2">มัธยมศึกษาปีที่ 2</option>
+                                <option value="มัธยมศึกษาปีที่ 3">มัธยมศึกษาปีที่ 3</option>
                             </select>
                         </div>
-                    </div>
-
-                    <div id="exams-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     </div>
                 </div>
 
-                <div id="tab-users" class="hidden space-y-6 fade-in admin-only">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <div>
-                            <h2 class="text-2xl font-bold text-slate-900">จัดการสิทธิ์บัญชีผู้ใช้งานระบบ</h2>
-                            <p class="text-sm text-gray-500">เพิ่ม ลบ หรือแก้ไขบัญชีรายชื่อคณะครูและแอดมินทั้งหมดในสถานศึกษา</p>
+                <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden flex flex-col">
+                    <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">รายการเอกสารข้อสอบทั้งหมด</span>
+                        <div class="flex gap-2">
+                            <button onclick="exportExamsToCSV()" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition cursor-pointer">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> ส่งออกข้อมูล (CSV)
+                            </button>
+                            <button id="btn-add-exam-trigger" onclick="openExamForm()" class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition shadow-xs hidden cursor-pointer">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i> เพิ่มข้อสอบและเฉลย
+                            </button>
                         </div>
-                        <button onclick="openUserModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm px-4 py-2.5 rounded-xl transition shadow flex items-center gap-2 self-start sm:self-auto">
-                            <i data-lucide="user-plus" class="w-4 h-4"></i> เพิ่มบัญชีผู้ใช้ใหม่
-                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-50/70 border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                    <th class="p-4">ปีการศึกษา / รหัสวิชา</th>
+                                    <th class="p-4">ชื่อรายวิชา / ระดับชั้น</th>
+                                    <th class="p-4">กลุ่มสาระฯ</th>
+                                    <th class="p-4">เรื่องที่สอน</th>
+                                    <th class="p-4">ไฟล์ข้อสอบและเฉลย</th>
+                                    <th class="p-4">ผู้ดำเนินการ</th>
+                                    <th class="p-4 text-right">การจัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-exams-body" class="divide-y divide-slate-100 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="page-exam-form" class="view-section max-w-7xl w-full mx-auto px-4 md:px-8 py-6 fade-in hidden flex flex-col gap-6">
+                <form id="form-exam-data" onsubmit="saveExamDocument(event)" class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-6 md:p-8 rounded-2xl shadow-xs border border-slate-200">
+                    <input type="hidden" id="form-exam-id">
+                    <div class="flex flex-col gap-4">
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-slate-500">ปีการศึกษา (พ.ศ.) <span class="text-red-500">*</span></label>
+                            <input type="number" id="fx-year" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition" value="2569" placeholder="เช่น 2569">
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-slate-500">กลุ่มสาระการเรียนรู้ <span class="text-red-500">*</span></label>
+                            <select id="fx-group" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition">
+                                <option value="ภาษาไทย">ภาษาไทย</option>
+                                <option value="คณิตศาสตร์">คณิตศาสตร์</option>
+                                <option value="วิทยาศาสตร์และเทคโนโลยี">วิทยาศาสตร์และเทคโนโลยี</option>
+                                <option value="สังคมศึกษา ศาสนา และวัฒนธรรม">สังคมศึกษา ศาสนา และวัฒนธรรม</option>
+                                <option value="สุขศึกษาและพลศึกษา">สุขศึกษาและพลศึกษา</option>
+                                <option value="ศิลปะ">ศิลปะ</option>
+                                <option value="การงานอาชีพ">การงานอาชีพ</option>
+                                <option value="ภาษาต่างประเทศ">ภาษาต่างประเทศ</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-slate-500">รหัสวิชา <span class="text-red-500">*</span></label>
+                            <input type="text" id="fx-code" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition" placeholder="เช่น ค11101">
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-slate-500">ชื่อรายวิชา <span class="text-red-500">*</span></label>
+                            <input type="text" id="fx-name" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition" placeholder="เช่น คณิตศาสตร์พื้นฐาน">
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-slate-500">ระดับชั้น <span class="text-red-500">*</span></label>
+                            <select id="fx-grade" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition">
+                                <option value="ประถมศึกษาปีที่ 1">ประถมศึกษาปีที่ 1</option>
+                                <option value="ประถมศึกษาปีที่ 2">ประถมศึกษาปีที่ 2</option>
+                                <option value="ประถมศึกษาปีที่ 3">ประถมศึกษาปีที่ 3</option>
+                                <option value="ประถมศึกษาปีที่ 4">ประถมศึกษาปีที่ 4</option>
+                                <option value="ประถมศึกษาปีที่ 5">ประถมศึกษาปีที่ 5</option>
+                                <option value="ประถมศึกษาปีที่ 6">ประถมศึกษาปีที่ 6</option>
+                                <option value="มัธยมศึกษาปีที่ 1">มัธยมศึกษาปีที่ 1</option>
+                                <option value="มัธยมศึกษาปีที่ 2">มัธยมศึกษาปีที่ 2</option>
+                                <option value="มัธยมศึกษาปีที่ 3">มัธยมศึกษาปีที่ 3</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-slate-500">มาตรฐานการเรียนรู้ <span class="text-red-500">*</span></label>
+                            <input type="text" id="fx-standard" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition" placeholder="เช่น ค 1.1">
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-slate-500">ตัวชี้วัดปลายทาง <span class="text-red-500">*</span></label>
+                            <input type="text" id="fx-indicator" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition" placeholder="เช่น ป.1/2">
+                        </div>
                     </div>
 
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="flex flex-col gap-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-xs font-semibold text-slate-500">ชื่อหน่วยการเรียนรู้ <span class="text-red-500">*</span></label>
+                                <input type="text" id="fx-unit" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition" placeholder="เช่น จำนวนนับ 1 ถึง 10">
+                            </div>
+                            <div class="flex flex-col gap-1.5">
+                                <label class="text-xs font-semibold text-slate-500">เรื่อง <span class="text-red-500">*</span></label>
+                                <input type="text" id="fx-topic" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition" placeholder="เช่น การบวกเลข">
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-slate-500">สาระสำคัญ <span class="text-red-500">*</span></label>
+                            <textarea id="fx-essential" required rows="2" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition" placeholder="สรุปเนื้อหาสำคัญสั้นๆ..."></textarea>
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-blue-600">จุดประสงค์ด้านความรู้ความเข้าใจ (K) <span class="text-red-500">*</span></label>
+                            <input type="text" id="fx-obj-k" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition" placeholder="ระบุสิ่งที่ผู้เรียนจะรู้...">
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-emerald-600">จุดประสงค์ด้านทักษะกระบวนการ (P) <span class="text-red-500">*</span></label>
+                            <input type="text" id="fx-obj-p" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition" placeholder="ระบุสิ่งที่ผู้เรียนทำได้...">
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-amber-600">จุดประสงค์ด้านคุณลักษณะ/เจตคติ (A) <span class="text-red-500">*</span></label>
+                            <input type="text" id="fx-obj-a" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-600 transition" placeholder="ระบุพฤติกรรมพึงประสงค์...">
+                        </div>
+                        
+                        <div class="border border-dashed border-slate-200 p-4 rounded-2xl bg-slate-50/50 flex flex-col gap-4 mt-2">
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">แนบไฟล์ข้อสอบ พร้อมเฉลย (PDF)</span>
+                            <div class="flex flex-col gap-1">
+                                <label class="text-xs font-semibold text-slate-600">1. ไฟล์ข้อสอบ <span class="text-red-500">*</span></label>
+                                <input type="file" id="fx-file-exam" accept="application/pdf" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                <p id="fx-current-exam-url" class="text-[10px] text-slate-400 truncate"></p>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <label class="text-xs font-semibold text-slate-600">2. ไฟล์เฉลยข้อสอบ <span class="text-red-500">*</span></label>
+                                <input type="file" id="fx-file-answer" accept="application/pdf" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100">
+                                <p id="fx-current-answer-url" class="text-[10px] text-slate-400 truncate"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2 flex justify-end gap-3 pt-4 border-t border-slate-100">
+                        <button type="button" onclick="switchPage('exams')" class="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-600 hover:bg-slate-50 transition cursor-pointer">ยกเลิก</button>
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs hover:bg-blue-700 transition shadow-xs cursor-pointer">บันทึกข้อมูล</button>
+                    </div>
+                </form>
+            </section>
+
+            <section id="page-users" class="view-section max-w-7xl w-full mx-auto px-4 md:px-8 py-6 fade-in hidden flex flex-col gap-6">
+                <div id="teacher-password-box" class="bg-amber-50 border border-amber-200/60 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h4 class="text-sm font-bold text-amber-900 flex items-center gap-1.5"><i data-lucide="shield-check" class="w-4 h-4 text-amber-600"></i> ความปลอดภัยของบัญชี</h4>
+                        <p class="text-xs text-amber-700 mt-0.5">คุณสามารถตั้งรหัสผ่านใหม่เพื่อความปลอดภัยในการเข้าใช้งานระบบ</p>
+                    </div>
+                    <div class="flex gap-2 w-full md:w-auto">
+                        <input type="password" id="self-new-password" placeholder="รหัสผ่านใหม่ที่นี่..." class="bg-white px-3 py-1.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden w-full md:w-48">
+                        <button onclick="changeSelfPassword()" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-1.5 rounded-xl text-xs whitespace-nowrap transition shadow-xs cursor-pointer">เปลี่ยนรหัสผ่าน</button>
+                    </div>
+                </div>
+
+                <div id="admin-user-management-box" class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-4 hidden">
+                    <div class="flex justify-between items-center">
+                        <div class="flex flex-col">
+                            <h3 class="text-base font-bold text-slate-800">จัดการข้อมูลผู้ใช้งานระบบทั้งหมด</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">สิทธิ์เฉพาะผู้ดูแลระบบ (Admin) ในการ เพิ่ม/ลบ/แก้ไขข้อมูลครูผู้สอน</p>
+                        </div>
+                        <button onclick="openUserModal()" class="flex items-center gap-1 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition shadow-xs cursor-pointer">
+                            <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> เพิ่มผู้ใช้งาน
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                    <th class="p-4">ชื่อผู้ใช้ (Username)</th>
+                                    <th class="p-4">ชื่อ-นามสกุลจริง</th>
+                                    <th class="p-4">สิทธิ์การเข้าถึง</th>
+                                    <th class="p-4">ลงทะเบียนเมื่อ</th>
+                                    <th class="p-4 text-right">การจัดการ</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-users-body" class="divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-slate-200 py-4 mt-auto text-center px-4">
+        <p class="text-xs md:text-sm text-slate-500 font-medium tracking-wide">
+            &copy; 2026 โรงเรียนทนาพรวิทยา. ระบบคลังข้อสอบออนไลน์ พัฒนาโดย นายเจษฎากร เชิดฉาย
+        </p>
+    </footer>
+
+    <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 h-16 flex items-center justify-around px-4 z-50 shadow-lg"></nav>
+
+    <script>
+        const CLIENT_URL = "https://iajnykwfhcrfdejzlcxj.supabase.co"; 
+        const CLIENT_KEY = "sb_publishable_MtzaNJW1s9Tp3MI3OEK1Wg_PkSYrmiN";
+
+        const coreStorageEngine = {
+            async fetch(endpoint, options = {}) {
+                const res = await fetch(`${CLIENT_URL}/rest/v1/${endpoint}`, {
+                    ...options,
+                    headers: {
+                        "apikey": CLIENT_KEY,
+                        "Authorization": `Bearer ${CLIENT_KEY}`,
+                        "Content-Type": "application/json",
+                        "Prefer": "return=representation",
+                        ...options.headers
+                    }
+                });
+                if (!res.ok) {
+                    const errText = await res.text();
+                    throw new Error(errText || 'Network request went wrong.');
+                }
+                return await res.json();
+            },
+            async uploadFile(bucket, filename, fileBody) {
+                const res = await fetch(`${CLIENT_URL}/storage/v1/object/${bucket}/${filename}`, {
+                    method: 'POST',
+                    headers: {
+                        "apikey": CLIENT_KEY,
+                        "Authorization": `Bearer ${CLIENT_KEY}`,
+                    },
+                    body: fileBody
+                });
+                if (!res.ok) throw new Error("ไฟล์อัปโหลดล้มเหลว");
+                return `${CLIENT_URL}/storage/v1/object/public/${bucket}/${filename}`;
+            }
+        };
+
+        let globalSession = { user: null, role: 'Guest' };
+        let loadedExams = [];
+        let loadedUsers = [];
+        let activePage = 'landing';
+        let chartsInstance = {}; 
+
+        const subjectGroupsList = [
+            "ภาษาไทย", "คณิตศาสตร์", "วิทยาศาสตร์และเทคโนโลยี", 
+            "สังคมศึกษา ศาสนา และวัฒนธรรม", "สุขศึกษาและพลศึกษา", 
+            "ศิลปะ", "การงานอาชีพ", "ภาษาต่างประเทศ"
+        ];
+
+        const gradeShortenerMap = {
+            "ประถมศึกษาปีที่ 1": "ป.1", "ประถมศึกษาปีที่ 2": "ป.2", "ประถมศึกษาปีที่ 3": "ป.3",
+            "ประถมศึกษาปีที่ 4": "ป.4", "ประถมศึกษาปีที่ 5": "ป.5", "ประถมศึกษาปีที่ 6": "ป.6",
+            "มัธยมศึกษาปีที่ 1": "ม.1", "มัธยมศึกษาปีที่ 2": "ม.2", "มัธยมศึกษาปีที่ 3": "ม.3"
+        };
+
+        function triggerToast(message, variant = 'success') {
+            const container = document.getElementById('toast-box');
+            const toast = document.createElement('div');
+            const bgClass = variant === 'success' ? 'bg-emerald-600' : (variant === 'danger' ? 'bg-red-600' : 'bg-amber-500');
+            toast.className = `${bgClass} text-white px-4 py-3 rounded-xl shadow-lg font-medium text-xs flex items-center gap-2 fade-in max-w-xs`;
+            toast.innerHTML = `<i data-lucide="info" class="w-4 h-4"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => { toast.remove(); }, 3500);
+        }
+
+        function toggleLoader(show = false) {
+            document.getElementById('global-loader').classList.toggle('hidden', !show);
+        }
+
+        function toggleModal(id, show = false) {
+            document.getElementById(id).classList.toggle('hidden', !show);
+        }
+
+        async function syncSystemData() {
+            try {
+                loadedUsers = await coreStorageEngine.fetch('system_users?order=id.asc');
+                loadedExams = await coreStorageEngine.fetch('exam_documents?order=created_at.desc');
+                
+                renderExamTable();
+                renderUsersTable();
+                renderArchiveTables();
+                refreshDashboardCharts();
+            } catch (err) {
+                console.error(err.message);
+            }
+        }
+
+        function switchPage(target) {
+            activePage = target;
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
+            
+            const config = {
+                'landing': { title: '', icon: 'home' },
+                'dashboard': { title: 'แดชบอร์ดข้อมูลสารสนเทศผู้บริหาร', icon: 'pie-chart' },
+                'archive': { title: 'คลังข้อสอบแยกตามกลุ่มสาระการเรียนรู้', icon: 'archive' },
+                'exams': { title: 'ระบบจัดการและจัดเก็บข้อสอบโรงเรียน', icon: 'file-text' },
+                'exam-form': { title: document.getElementById('form-exam-id').value ? 'แก้ไขข้อมูลข้อสอบ' : 'อัปโหลดไฟล์เอกสารข้อสอบใหม่', icon: 'file-up' },
+                'users': { title: 'จัดการผู้ใช้งานและความปลอดภัย', icon: 'users' }
+            };
+
+            const current = config[target] || { title: 'ระบบ', icon: 'layers' };
+            const subHeader = document.getElementById('sub-page-header');
+            const topNav = document.getElementById('global-top-nav');
+            
+            if (target === 'landing') {
+                topNav.classList.add('hidden');
+                document.body.classList.remove('pt-16'); 
+                subHeader.classList.add('hidden');
+            } else {
+                topNav.classList.remove('hidden');
+                document.body.classList.add('pt-16');
+                if (current.title === '') {
+                    subHeader.classList.add('hidden');
+                } else {
+                    subHeader.classList.remove('hidden');
+                    document.getElementById('page-title').innerText = current.title;
+                    document.getElementById('title-icon').setAttribute('data-lucide', current.icon);
+                }
+            }
+
+            document.getElementById(`page-${target}`).classList.remove('hidden');
+            updateMenuUIStates();
+        }
+
+        function updateMenuUIStates() {
+            const isGuest = globalSession.role === 'Guest';
+            const btnAuth = document.getElementById('btn-top-auth');
+            const userCard = document.getElementById('nav-user-card');
+
+            if (isGuest) {
+                btnAuth.innerHTML = `<i data-lucide="home" class="w-3.5 h-3.5"></i> หน้าแรก`;
+                btnAuth.setAttribute('onclick', "switchPage('landing')");
+                btnAuth.className = "flex items-center gap-2 px-4 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition shadow-xs cursor-pointer";
+                userCard.classList.add('hidden');
+                userCard.classList.remove('flex');
+            } else {
+                btnAuth.innerHTML = `<i data-lucide="log-out" class="w-3.5 h-3.5"></i> ออกจากระบบ`;
+                btnAuth.setAttribute('onclick', "toggleModal('logout-modal', true)");
+                btnAuth.className = "flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-700/5 rounded-xl transition border border-red-200/50 cursor-pointer";
+                userCard.classList.remove('hidden');
+                userCard.classList.add('flex');
+            }
+
+            document.getElementById('btn-add-exam-trigger').classList.toggle('hidden', isGuest);
+            document.getElementById('admin-user-management-box').classList.toggle('hidden', globalSession.role !== 'Admin');
+
+            renderNavigationMenus();
+            lucide.createIcons();
+        }
+
+        function renderNavigationMenus() {
+            const role = globalSession.role;
+            const desktopMenu = document.getElementById('desktop-menu-list');
+            const bottomNav = document.getElementById('mobile-bottom-nav');
+            
+            let links = [];
+            if (role !== 'Guest') {
+                links.push({ id: 'dashboard', label: 'แดชบอร์ด', icon: 'pie-chart' });
+                links.push({ id: 'archive', label: 'คลังข้อสอบ', icon: 'archive' });
+                links.push({ id: 'exams', label: 'จัดการข้อสอบ', icon: 'file-text' });
+                links.push({ id: 'users', label: 'ตั้งค่าผู้ใช้', icon: 'users' });
+            } else {
+                links.push({ id: 'landing', label: 'หน้าแรก', icon: 'home' });
+                links.push({ id: 'archive', label: 'คลังข้อสอบสาธารณะ', icon: 'archive' });
+            }
+
+            desktopMenu.innerHTML = links.map(lnk => `
+                <button onclick="switchPage('${lnk.id}')" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition cursor-pointer ${activePage === lnk.id ? 'bg-white text-blue-600 shadow-xs' : 'text-slate-600 hover:bg-white/50'}">
+                    <i data-lucide="${lnk.icon}" class="w-3.5 h-3.5"></i> ${lnk.label}
+                </button>
+            `).join('');
+
+            bottomNav.innerHTML = links.map(lnk => `
+                <button onclick="switchPage('${lnk.id}')" class="flex flex-col items-center justify-center text-slate-500 flex-1 ${activePage === lnk.id ? 'text-blue-600' : ''}">
+                    <i data-lucide="${lnk.icon}" class="w-4 h-4"></i>
+                    <span class="text-[9px] font-medium mt-0.5">${lnk.label}</span>
+                </button>
+            `).join('');
+        }
+
+        function renderArchiveTables() {
+            const container = document.getElementById('archive-tables-container');
+            if (!container) return;
+
+            const groupFilter = document.getElementById('archive-filter-group').value;
+            const gradeFilter = document.getElementById('archive-filter-grade').value;
+            const searchFilter = document.getElementById('archive-filter-search').value.toLowerCase();
+            const activeGroups = groupFilter ? [groupFilter] : subjectGroupsList;
+
+            let htmlOutput = "";
+
+            activeGroups.forEach((groupName) => {
+                const groupExams = loadedExams.filter(item => {
+                    if (item.subject_group !== groupName) return false;
+                    const matchGrade = !gradeFilter || item.grade_level === gradeFilter;
+                    const matchSearch = !searchFilter || 
+                        item.subject_code.toLowerCase().includes(searchFilter) || 
+                        item.subject_name.toLowerCase().includes(searchFilter) || 
+                        item.topic_name.toLowerCase().includes(searchFilter);
+                    return matchGrade && matchSearch;
+                });
+                
+                let tableRows = "";
+                if (groupExams.length === 0) {
+                    tableRows = `<tr><td colspan="7" class="p-6 text-center text-xs text-slate-400">ไม่พบข้อมูลเอกสารข้อสอบที่ตรงตามเงื่อนไข</td></tr>`;
+                } else {
+                    tableRows = groupExams.map(item => {
+                        const operatorUser = loadedUsers.find(u => u.username === item.uploaded_by);
+                        const operatorDisplayName = operatorUser ? operatorUser.full_name : item.uploaded_by;
+                        const shortenedGrade = gradeShortenerMap[item.grade_level] || item.grade_level;
+
+                        return `
+                            <tr class="hover:bg-slate-50 transition text-sm">
+                                <td class="p-4 font-bold text-slate-700">${shortenedGrade}</td>
+                                <td class="p-4">
+                                    <span class="text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded mr-1">${item.subject_code}</span>
+                                    <span class="font-medium text-slate-800">${item.subject_name}</span>
+                                </td>
+                                <td class="p-4 text-xs font-medium text-slate-600">${item.learning_standard || '-'} / ${item.indicator || '-'}</td>
+                                <td class="p-4 text-xs text-slate-600">${item.unit_name}</td>
+                                <td class="p-4 text-xs text-slate-700 font-medium max-w-xs truncate">${item.topic_name}</td>
+                                <td class="p-4 text-xs text-slate-500 font-medium">${operatorDisplayName}</td>
+                                <td class="p-4">
+                                    <div class="flex flex-wrap gap-2">
+                                        <a href="${item.exam_file_url}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg transition">
+                                            <i data-lucide="file" class="w-3 h-3"></i> ข้อสอบ
+                                        </a>
+                                        <a href="${item.answer_file_url}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg transition">
+                                            <i data-lucide="file-check" class="w-3 h-3"></i> เฉลย
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+
+                const accentColors = ['blue', 'emerald', 'indigo', 'amber', 'red', 'purple', 'orange', 'cyan'];
+                const color = accentColors[subjectGroupsList.indexOf(groupName) % accentColors.length];
+
+                htmlOutput += `
+                    <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden flex flex-col fade-in">
+                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex items-center gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-${color}-600"></span>
+                            <h3 class="text-sm font-bold text-slate-800">กลุ่มสาระการเรียนรู้${groupName}</h3>
+                        </div>
                         <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse text-sm">
-                                <thead class="bg-slate-50 text-slate-600 font-medium border-b border-gray-100">
-                                    <tr>
-                                        <th class="p-4">ลำดับ</th>
-                                        <th class="p-4">ชื่อ-นามสกุล</th>
-                                        <th class="p-4">ชื่อผู้ใช้ (Username)</th>
-                                        <th class="p-4">ระดับบทบาท (Role)</th>
-                                        <th class="p-4 text-right">ตัวเลือกดำเนินการ</th>
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50/40 border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                        <th class="p-4 w-24">ระดับชั้น</th>
+                                        <th class="p-4">ชื่อรายวิชา</th>
+                                        <th class="p-4">ตัวชี้วัดปลายทาง</th>
+                                        <th class="p-4">หน่วยการเรียนรู้</th>
+                                        <th class="p-4">เรื่องที่สอน</th>
+                                        <th class="p-4">ผู้ดำเนินการ</th>
+                                        <th class="p-4">ดาวน์โหลดข้อสอบและเฉลย</th>
                                     </tr>
                                 </thead>
-                                <tbody id="users-table-body" class="divide-y divide-gray-50 text-slate-700">
+                                <tbody class="divide-y divide-slate-100">
+                                    ${tableRows}
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                </div>
+                `;
+            });
 
-            </div>
-        </main>
-
-        <div id="bottom-nav" class="md:hidden fixed bottom-12 left-0 right-0 bg-slate-900 border-t border-slate-800 text-slate-400 z-40 flex justify-around items-center h-16 px-2">
-            <button onclick="switchAppTab('dashboard')" id="bot-tab-dashboard" class="flex flex-col items-center justify-center text-white flex-1 py-1"><i data-lucide="layout-dashboard" class="w-5 h-5"></i><span class="text-[10px] mt-0.5">แดชบอร์ด</span></button>
-            <button onclick="switchAppTab('exams')" id="bot-tab-exams" class="flex flex-col items-center justify-center flex-1 py-1"><i data-lucide="file-spreadsheet" class="w-5 h-5"></i><span class="text-[10px] mt-0.5">คลังข้อสอบ</span></button>
-            <button onclick="openChangePasswordModal()" id="bot-tab-password" class="flex flex-col items-center justify-center flex-1 py-1"><i data-lucide="key-round" class="w-5 h-5"></i><span class="text-[10px] mt-0.5">เปลี่ยนรหัส</span></button>
-            <button onclick="toggleMobileAdminPanel()" id="bot-tab-admin-control" class="flex flex-col items-center justify-center flex-1 py-1 text-amber-400 admin-only hidden"><i data-lucide="menu" class="w-6 h-6 bg-slate-800 p-1 rounded-lg border border-slate-700"></i><span class="text-[10px] mt-0.5">แผงควบคุม</span></button>
-            <button onclick="openLogoutModal()" class="flex flex-col items-center justify-center text-red-400 flex-1 py-1"><i data-lucide="log-out" class="w-5 h-5"></i><span class="text-[10px] mt-0.5">ออก</span></button>
-        </div>
-
-        <div id="mobile-admin-panel" class="fixed left-0 right-0 bottom-28 bg-slate-900 text-white border-t border-slate-800 p-4 shadow-2xl rounded-t-2xl transform translate-y-full transition-transform duration-300 z-30 max-w-md mx-auto hidden">
-            <div class="flex justify-between items-center mb-4 border-b border-slate-800 pb-2">
-                <span class="text-sm font-semibold text-amber-400 flex items-center gap-1.5"><i data-lucide="shield-alert" class="w-4 h-4"></i> ฟังก์ชันการจัดการระบบผู้ดูแล</span>
-                <button onclick="toggleMobileAdminPanel(false)" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="switchAppTab('users'); toggleMobileAdminPanel(false);" class="bg-slate-800 hover:bg-slate-700 p-4 rounded-xl flex flex-col items-center gap-2 border border-slate-700 text-center transition"><i data-lucide="users" class="w-6 h-6 text-indigo-400"></i><span class="text-xs font-medium">จัดการสิทธิ์ผู้ใช้</span></button>
-                <button onclick="exportFullExamsReport()" class="bg-slate-800 hover:bg-slate-700 p-4 rounded-xl flex flex-col items-center gap-2 border border-slate-700 text-center transition"><i data-lucide="download-cloud" class="w-6 h-6 text-emerald-400"></i><span class="text-xs font-medium">ดาวน์โหลดรายงาน</span></button>
-            </div>
-        </div>
-
-    </div>
-
-
-    <footer class="fixed bottom-0 left-0 right-0 z-50 bg-white/60 backdrop-blur-md border-t border-gray-200/80 text-slate-500 py-3 px-4 text-center text-xs font-normal">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-center items-center gap-1 sm:gap-2">
-            <span class="font-semibold text-slate-700">© 2026 โรงเรียนทนาพรวิทยา.</span>
-            <span>คลังข้อสอบออนไลน์ พัฒนาโดย นายเจษฎากร เชิดฉาย</span>
-        </div>
-    </footer>
-
-
-    <div id="modal-exam" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden overflow-y-auto">
-        <div class="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl p-6 relative slide-up">
-            <button onclick="closeExamModal()" class="absolute right-4 top-4 text-gray-400 hover:text-slate-700"><i data-lucide="x" class="w-6 h-6"></i></button>
-            <h3 id="exam-modal-title" class="text-xl font-bold text-slate-900 mb-4">ข้อมูลชิ้นงานเอกสารข้อสอบ</h3>
-            
-            <form id="form-exam" onsubmit="handleExamSubmit(event)">
-                <input type="hidden" id="exam-id">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">กลุ่มสาระการเรียนรู้ *</label>
-                        <select id="exam-subject" required class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
-                            <option value="คณิตศาสตร์">คณิตศาสตร์</option>
-                            <option value="วิทยาศาสตร์และเทคโนโลยี">วิทยาศาสตร์และเทคโนโลยี</option>
-                            <option value="ภาษาไทย">ภาษาไทย</option>
-                            <option value="ภาษาต่างประเทศ">ภาษาต่างประเทศ</option>
-                            <option value="สังคมศึกษา ศาสนา และวัฒนธรรม">สังคมศึกษา ศาสนา และวัฒนธรรม</option>
-                            <option value="สุขศึกษาและพลศึกษา">สุขศึกษาและพลศึกษา</option>
-                            <option value="ศิลปะ">ศิลปะ</option>
-                            <option value="การงานอาชีพ">การงานอาชีพ</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">รายวิชาพื้นฐาน <span class="text-gray-400 text-[10px]">(กรอกช่องใดช่องหนึ่ง)</span></label>
-                        <input type="text" id="exam-basic-course" class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="เช่น คณิตศาสตร์พื้นฐาน (ค21101)">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">รายวิชาเพิ่มเติม <span class="text-gray-400 text-[10px]">(กรอกช่องใดช่องหนึ่ง)</span></label>
-                        <input type="text" id="exam-additional-course" class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="เช่น ของเล่นเชิงวิทยาศาสตร์">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">ระดับชั้น *</label>
-                        <select id="exam-grade" required class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
-                            <option value="ป.1">ป.1</option><option value="ป.2">ป.2</option><option value="ป.3">ป.3</option>
-                            <option value="ป.4">ป.4</option><option value="ป.5">ป.5</option><option value="ป.6">ป.6</option>
-                            <option value="ม.1">ม.1</option><option value="ม.2">ม.2</option><option value="ม.3">ม.3</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">ชื่อหน่วยการเรียนรู้ *</label>
-                        <input type="text" id="exam-unit" required class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">เรื่องที่สอน *</label>
-                        <input type="text" id="exam-topic" required class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">มาตรฐานการเรียนรู้</label>
-                        <input type="text" id="exam-standard" class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">ตัวชี้วัด</label>
-                        <input type="text" id="exam-indicator" class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">ตัวชี้วัดปลายทาง</label>
-                        <input type="text" id="exam-final-indicator" class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">ภาพหน้าปกข้อสอบ (บีบอัดอัตโนมัติ)</label>
-                        <input type="file" id="exam-img-input" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="block text-xs font-medium text-gray-600 mb-1">สาระสำคัญ</label>
-                        <textarea id="exam-content" rows="2" class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                    </div>
-                    
-                    <div class="md:col-span-2 border-t pt-2 mt-1">
-                        <p class="text-xs font-bold text-indigo-600 mb-2">จุดประสงค์การเรียนรู้ (Objectives: K-P-A)</p>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <div>
-                                <label class="block text-[11px] text-gray-500 mb-0.5">ด้านความรู้ (Knowledge: K)</label>
-                                <input type="text" id="exam-obj-k" class="w-full text-sm border border-gray-300 rounded-xl p-2 outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] text-gray-500 mb-0.5">ด้านทักษะ/กระบวนการ (Process: P)</label>
-                                <input type="text" id="exam-obj-p" class="w-full text-sm border border-gray-300 rounded-xl p-2 outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] text-gray-500 mb-0.5">ด้านคุณลักษณะอันพึงประสงค์ (Attitude: A)</label>
-                                <input type="text" id="exam-obj-a" class="w-full text-sm border border-gray-300 rounded-xl p-2 outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="border-t pt-3 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">1. ไฟล์เอกสารข้อสอบ (doc, pdf เท่านั้น) *</label>
-                            <input type="file" id="file-exam-doc" accept=".doc,.docx,.pdf" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-slate-100 text-slate-800">
-                            <p id="label-existing-exam" class="text-[11px] text-emerald-600 mt-1 hidden">✓ มีไฟล์เดิมอยู่ในระบบคลัง</p>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">2. ไฟล์เอกสารเฉลยแยกส่วน (doc, pdf เท่านั้น) *</label>
-                            <input type="file" id="file-answer-doc" accept=".doc,.docx,.pdf" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-slate-100 text-slate-800">
-                            <p id="label-existing-answer" class="text-[11px] text-emerald-600 mt-1 hidden">✓ มีไฟล์เดิมอยู่ในระบบคลัง</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-6 flex justify-end gap-3 border-t pt-4">
-                    <button type="button" onclick="closeExamModal()" class="bg-gray-100 hover:bg-gray-200 text-slate-700 px-5 py-2 rounded-xl text-sm font-medium transition">ยกเลิก</button>
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-2 rounded-xl text-sm font-medium transition shadow-md">บันทึก</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-user" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl p-6 relative slide-up">
-            <button onclick="closeUserModal()" class="absolute right-4 top-4 text-gray-400 hover:text-slate-700"><i data-lucide="x" class="w-6 h-6"></i></button>
-            <h3 id="user-modal-title" class="text-lg font-bold text-slate-900 mb-4">ข้อมูลสิทธิ์บัญชีผู้ใช้งาน</h3>
-            
-            <form id="form-user" onsubmit="handleUserSubmit(event)">
-                <input type="hidden" id="user-id">
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">ชื่อ-นามสกุล *</label>
-                        <input type="text" id="user-fullname" required class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">ชื่อผู้ใช้งาน (Username) *</label>
-                        <input type="text" id="user-username" required class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">รหัสผ่าน (Password) *</label>
-                        <input type="text" id="user-password" required class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">ระดับสิทธิ์สิทธิ์การเข้าถึง (Role) *</label>
-                        <select id="user-role" required class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500">
-                            <option value="Teacher">Teacher (ผู้สอน อัปโหลดแก้ไขงานตัวเองได้)</option>
-                            <option value="Admin">Admin (ผู้ดูแลระบบสูงสุด ดำเนินการได้ทุกอย่าง)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mt-6 flex justify-end gap-2 border-t pt-4">
-                    <button type="button" onclick="closeUserModal()" class="bg-gray-100 hover:bg-gray-200 text-slate-700 px-4 py-2 rounded-xl text-xs transition">ยกเลิก</button>
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-xs transition shadow-md">บันทึกสิทธิ์ผู้ใช้</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-password" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6 relative slide-up">
-            <button onclick="closeChangePasswordModal()" class="absolute right-4 top-4 text-gray-400 hover:text-slate-700"><i data-lucide="x" class="w-6 h-6"></i></button>
-            <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-1.5"><i data-lucide="key-round" class="text-indigo-600 w-5 h-5"></i> เปลี่ยนรหัสผ่านเข้าใช้งาน</h3>
-            <p class="text-xs text-gray-500 mb-4">โปรดกำหนดรหัสผ่านใหม่เพื่อความปลอดภัยของบัญชีผู้สอน</p>
-            
-            <form id="form-change-password" onsubmit="handleChangePasswordSubmit(event)">
-                <div class="space-y-3">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">รหัสผ่านปัจจุบัน *</label>
-                        <input type="password" id="pwd-current" required class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="••••••••">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">รหัสผ่านใหม่ *</label>
-                        <input type="password" id="pwd-new" required class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="ระบุรหัสผ่านใหม่">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-600 mb-1">ยืนยันรหัสผ่านใหม่ *</label>
-                        <input type="password" id="pwd-confirm" required class="w-full text-sm border border-gray-300 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-indigo-500" placeholder="กรอกรหัสผ่านใหม่อีกครั้ง">
-                    </div>
-                </div>
-                <div class="mt-5 flex justify-end gap-2 border-t pt-4">
-                    <button type="button" onclick="closeChangePasswordModal()" class="bg-gray-100 hover:bg-gray-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-medium transition">ยกเลิก</button>
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-xs font-medium transition shadow">อัปเดตรหัสผ่านใหม่</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div id="modal-confirm" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-2xl w-full max-w-sm p-6 text-center shadow-2xl slide-up">
-            <div id="confirm-icon-box" class="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 bg-red-100 text-red-600">
-                <i data-lucide="alert-triangle" class="w-6 h-6"></i>
-            </div>
-            <h4 id="confirm-title" class="text-base font-bold text-slate-900">ยืนยันการดำเนินการ?</h4>
-            <p id="confirm-message" class="text-xs text-gray-500 mt-1 mb-6">ข้อมูลที่ถูกดำเนินการจะไม่สามารถกู้คืนได้</p>
-            <div class="flex justify-center gap-3">
-                <button onclick="closeConfirmModal()" class="bg-gray-100 hover:bg-gray-200 text-slate-700 px-4 py-2 rounded-xl text-xs transition font-medium">ยกเลิก</button>
-                <button id="btn-confirm-action" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-xl text-xs transition font-medium shadow">ยืนยันทำรายการ</button>
-            </div>
-        </div>
-    </div>
-
-
-    <script>
-        const db_url = "https://frjayhjkkzlhcfjygowo.supabase.co"; 
-        const db_anon_key = "sb_publishable_oBJEtbJh6MFctPZyjjwdlQ__p4OpG2D";
-        const db_provider = supabase.createClient(db_url, db_anon_key);
-
-        let app_current_user = null;
-        let global_exams_cache = [];
-        let global_users_cache = [];
-        
-        let handleChartOverview = null;
-        let handleChartGuestGrades = null; 
-        let handleChartGrades = null;
-        let handleChartFileTypes = null;
-
-        document.addEventListener("DOMContentLoaded", () => {
-            lucide.createIcons();
-            switchView('landing');
-            fetchGuestLandingStats();
-        });
-
-        function switchView(target) {
-            document.getElementById('section-landing').classList.add('hidden');
-            document.getElementById('section-login').classList.add('hidden');
-            document.getElementById('section-app').classList.add('hidden');
-
-            if (target === 'landing') {
-                document.getElementById('section-landing').classList.remove('hidden');
-                fetchGuestLandingStats();
-            } else if (target === 'login') {
-                document.getElementById('section-login').classList.remove('hidden');
-                document.getElementById('form-login').reset();
-            } else if (target === 'app') {
-                document.getElementById('section-app').classList.remove('hidden');
-                setupAppLayoutForRole();
-                switchAppTab('dashboard');
-            }
+            container.innerHTML = htmlOutput;
             lucide.createIcons();
         }
 
-        function switchAppTab(tabName) {
-            if (tabName === 'users' && app_current_user && app_current_user.role === 'Teacher') {
-                triggerToast("คุณไม่มีสิทธิ์เข้าถึงหน้าบริหารจัดการส่วนกลาง", "warning");
-                return;
-            }
+        async function processLogin(e) {
+            if(e) e.preventDefault();
+            const u = document.getElementById('login-username').value;
+            const p = document.getElementById('login-password').value;
 
-            const tabs = ['dashboard', 'exams', 'users'];
-            tabs.forEach(t => {
-                const el = document.getElementById(`tab-${t}`);
-                if (el) el.classList.add('hidden');
-                
-                const sideBtn = document.getElementById(`side-tab-${t}`);
-                if (sideBtn) {
-                    sideBtn.className = "w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm transition " + 
-                        (t === tabName ? "bg-indigo-600 text-white" : "hover:bg-slate-800 text-slate-400 hover:text-white");
-                }
-                const botBtn = document.getElementById(`bot-tab-${t}`);
-                if (botBtn) {
-                    botBtn.className = "flex flex-col items-center justify-center flex-1 py-1 " + 
-                        (t === tabName ? "text-white font-semibold" : "text-slate-400");
-                }
-            });
-
-            const passSideBtn = document.getElementById('side-tab-password');
-            if (passSideBtn) passSideBtn.className = "w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm transition hover:bg-slate-800 text-slate-400 hover:text-white";
-            const passBotBtn = document.getElementById('bot-tab-password');
-            if (passBotBtn) passBotBtn.className = "flex flex-col items-center justify-center flex-1 py-1 text-slate-400";
-
-            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-            
-            if (tabName === 'dashboard') {
-                renderExecutiveCharts();
-            } else if (tabName === 'exams') {
-                fetchExams();
-            } else if (tabName === 'users') {
-                fetchUsers();
-            }
-            lucide.createIcons();
-        }
-
-        function showLoader(show = true) {
-            document.getElementById('global-loader').classList.toggle('hidden', !show);
-        }
-
-        function triggerToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `p-4 rounded-xl shadow-xl text-white text-xs font-medium flex items-center gap-2 slide-up pointer-events-auto min-w-[200px] ${
-                type === 'success' ? 'bg-emerald-600' : type === 'warning' ? 'bg-amber-500' : 'bg-red-600'
-            }`;
-            
-            let icon = type === 'success' ? 'check-circle' : type === 'warning' ? 'alert-triangle' : 'x-circle';
-            toast.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4 flex-shrink-0"></i> <span>${message}</span>`;
-            container.appendChild(toast);
-            lucide.createIcons({ attrs: { class: ['w-4', 'h-4'] } });
-
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'transition', 'duration-300');
-                setTimeout(() => toast.remove(), 300);
-            }, 3500);
-        }
-
-        async function fetchGuestLandingStats() {
+            toggleLoader(true);
             try {
-                const { data: exams, error: eErr } = await db_provider.from('exams').select('*');
-                if (eErr) return;
+                const result = await coreStorageEngine.fetch(`system_users?username=eq.${u}&password=eq.${p}`);
+                if (result && result.length > 0) {
+                    const userData = result[0];
+                    globalSession.user = userData;
+                    globalSession.role = userData.role;
 
-                document.getElementById('stat-total-exams').innerText = exams.length;
+                    document.getElementById('nav-user-name').innerText = userData.full_name;
+                    document.getElementById('nav-user-role').innerText = userData.role === 'Admin' ? 'ADMIN' : 'TEACHER';
+                    document.getElementById('nav-user-avatar').innerText = userData.full_name[0];
 
-                let primary = 0, secondary = 0;
-                let subjectCounts = { 
-                    'ภาษาไทย': 0,
-                    'คณิตศาสตร์': 0, 
-                    'วิทยาศาสตร์และเทคโนโลยี': 0, 
-                    'สังคมศึกษา ศาสนาฯ': 0, 
-                    'สุขศึกษาและพลศึกษา': 0, 
-                    'ศิลปะ': 0, 
-                    'การงานอาชีพ': 0, 
-                    'ภาษาต่างประเทศ': 0 
-                };
-
-                let gradeCounts = {
-                    'ป.1': 0, 'ป.2': 0, 'ป.3': 0,
-                    'ป.4': 0, 'ป.5': 0, 'ป.6': 0,
-                    'ม.1': 0, 'ม.2': 0, 'ม.3': 0
-                };
-
-                exams.forEach(x => {
-                    if (['ป.1','ป.2','ป.3','ป.4','ป.5','ป.6'].includes(x.grade_level)) primary++;
-                    if (['ม.1','ม.2','ม.3'].includes(x.grade_level)) secondary++;
+                    triggerToast(`เข้าสู่ระบบสำเร็จ! ยินดีต้อนรับคุณ ${userData.full_name}`, 'success');
+                    document.getElementById('form-login').reset();
                     
-                    let subGroupKey = x.subject_group;
-                    if (subGroupKey === 'สังคมศึกษา ศาสนา และวัฒนธรรม') subGroupKey = 'สังคมศึกษา ศาสนาฯ';
-                    if (subjectCounts[subGroupKey] !== undefined) {
-                        subjectCounts[subGroupKey]++;
-                    }
-
-                    if (gradeCounts[x.grade_level] !== undefined) {
-                        gradeCounts[x.grade_level]++;
-                    }
-                });
-
-                document.getElementById('stat-primary-exams').innerText = primary;
-                document.getElementById('stat-secondary-exams').innerText = secondary;
-
-                document.getElementById('stat-subject-th').innerHTML = `${subjectCounts['ภาษาไทย']} <span class="text-xs font-normal text-gray-400">ไฟล์</span>`;
-                document.getElementById('stat-subject-math').innerHTML = `${subjectCounts['คณิตศาสตร์']} <span class="text-xs font-normal text-gray-400">ไฟล์</span>`;
-                document.getElementById('stat-subject-sci').innerHTML = `${subjectCounts['วิทยาศาสตร์และเทคโนโลยี']} <span class="text-xs font-normal text-gray-400">ไฟล์</span>`;
-                document.getElementById('stat-subject-soc').innerHTML = `${subjectCounts['สังคมศึกษา ศาสนาฯ']} <span class="text-xs font-normal text-gray-400">ไฟล์</span>`;
-                document.getElementById('stat-subject-health').innerHTML = `${subjectCounts['สุขศึกษาและพลศึกษา']} <span class="text-xs font-normal text-gray-400">ไฟล์</span>`;
-                document.getElementById('stat-subject-art').innerHTML = `${subjectCounts['ศิลปะ']} <span class="text-xs font-normal text-gray-400">ไฟล์</span>`;
-                document.getElementById('stat-subject-career').innerHTML = `${subjectCounts['การงานอาชีพ']} <span class="text-xs font-normal text-gray-400">ไฟล์</span>`;
-                document.getElementById('stat-subject-foreign').innerHTML = `${subjectCounts['ภาษาต่างประเทศ']} <span class="text-xs font-normal text-gray-400">ไฟล์</span>`;
-
-                document.getElementById('stat-grade-p1').innerHTML = `${gradeCounts['ป.1']} <span class="text-[10px] font-normal text-gray-400">ไฟล์</span>`;
-                document.getElementById('stat-grade-p2').innerHTML = `${gradeCounts['ป.2']} <span class="text-[10px] font-normal text-gray-400">ไฟล์</span>`;
-                document.getElementById('stat-grade-p3').innerHTML = `${gradeCounts['ป.3']} <span class="text-[10px] font-normal text-gray-400">ไฟล์</span>`;
-                document.getElementById('stat-grade-p4').innerHTML = `${gradeCounts['ป.4']} <span class="text-[10px] font-normal text-gray-400">ไฟล์</span>`;
-                document.getElementById('stat-grade-p5').innerHTML = `${gradeCounts['ป.5']} <span class="text-[10px] font-normal text-gray-400">ไฟล์</span>`;
-                document.getElementById('stat-grade-p6').innerHTML = `${gradeCounts['ป.6']} <span class="text-[10px] font-normal text-gray-400">ไฟล์</span>`;
-                document.getElementById('stat-grade-m1').innerHTML = `${gradeCounts['ม.1']} <span class="text-[10px] font-normal text-amber-600">ไฟล์</span>`;
-                document.getElementById('stat-grade-m2').innerHTML = `${gradeCounts['ม.2']} <span class="text-[10px] font-normal text-amber-600">ไฟล์</span>`;
-                document.getElementById('stat-grade-m3').innerHTML = `${gradeCounts['ม.3']} <span class="text-[10px] font-normal text-amber-600">ไฟล์</span>`;
-
-                const ctx = document.getElementById('guestOverviewChart').getContext('2d');
-                if (handleChartOverview) handleChartOverview.destroy();
-                
-                handleChartOverview = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: Object.keys(subjectCounts),
-                        datasets: [{
-                            label: 'จำนวนไฟล์จัดเก็บ (ไฟล์)',
-                            data: Object.values(subjectCounts),
-                            backgroundColor: '#4f46e5',
-                            borderRadius: 8
-                        }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-                });
-
-                const ctxG = document.getElementById('guestGradeChart').getContext('2d');
-                if (handleChartGuestGrades) handleChartGuestGrades.destroy();
-                
-                handleChartGuestGrades = new Chart(ctxG, {
-                    type: 'bar',
-                    data: {
-                        labels: ['ป.1', 'ป.2', 'ป.3', 'ป.4', 'ป.5', 'ป.6', 'ม.1', 'ม.2', 'ม.3'],
-                        datasets: [{
-                            label: 'จำนวนไฟล์ข้อสอบแยกตามระดับชั้น (ไฟล์)',
-                            data: [
-                                gradeCounts['ป.1'], gradeCounts['ป.2'], gradeCounts['ป.3'],
-                                gradeCounts['ป.4'], gradeCounts['ป.5'], gradeCounts['ป.6'],
-                                gradeCounts['ม.1'], gradeCounts['ม.2'], gradeCounts['ม.3']
-                            ],
-                            backgroundColor: '#10b981',
-                            borderRadius: 8
-                        }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-                });
-
-            } catch (err) { console.error(err); }
-        }
-
-        async function handleCustomLogin(e) {
-            e.preventDefault();
-            showLoader(true);
-            const userInp = document.getElementById('login-username').value.trim();
-            const passInp = document.getElementById('login-password').value.trim();
-
-            try {
-                const { data, error } = await db_provider.from('app_users').select('*').eq('username', userInp).eq('password', passInp).single();
-                
-                if (error || !data) {
-                    triggerToast("ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้องสำหรับการเข้าถึง", "danger");
-                    showLoader(false);
-                    return;
-                }
-
-                app_current_user = data;
-                triggerToast(`ยินดีต้อนรับคุณ ${data.fullname} เข้าสู่ระบบ`, "success");
-                showLoader(false);
-                switchView('app');
-            } catch (err) {
-                showLoader(false);
-                triggerToast("เกิดความผิดพลาดในการเชื่อมต่อระบบหลังบ้าน", "danger");
-            }
-        }
-
-        function openLogoutModal() {
-            openConfirmModal("ยืนยันออกจากระบบ?", "ระบบจะทำการล้างสิทธิ์เซสชันปัจจุบันและนำคุณกลับสู่หน้าหลักทันที", "bg-amber-500", () => {
-                app_current_user = null;
-                document.getElementById('login-username').value = '';
-                document.getElementById('login-password').value = '';
-                global_exams_cache = [];
-                global_users_cache = [];
-                switchView('landing');
-                triggerToast("ออกจากระบบคลังข้อสอบสำเร็จ", "success");
-            });
-        }
-
-        function setupAppLayoutForRole() {
-            const role = app_current_user.role;
-            document.getElementById('user-badge').innerText = role;
-            document.getElementById('user-display-name').innerText = app_current_user.fullname;
-            document.getElementById('mobile-user-name').innerText = app_current_user.fullname;
-            document.getElementById('mobile-user-role').innerText = role;
-
-            const adminElements = document.querySelectorAll('.admin-only');
-            adminElements.forEach(el => {
-                if (role === 'Admin') el.classList.remove('hidden');
-                else el.classList.add('hidden');
-            });
-        }
-
-        function toggleMobileAdminPanel(forceState = null) {
-            const panel = document.getElementById('mobile-admin-panel');
-            if (forceState !== null) {
-                panel.classList.toggle('hidden', !forceState);
-                if(forceState) panel.classList.remove('translate-y-full');
-            } else {
-                const isHidden = panel.classList.toggle('hidden');
-                if(!isHidden) panel.classList.remove('translate-y-full');
-            }
-        }
-
-        function openChangePasswordModal() {
-            document.getElementById('form-change-password').reset();
-            
-            const sideBtn = document.getElementById('side-tab-password');
-            if (sideBtn) sideBtn.className = "w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm transition bg-slate-800 text-white";
-            const botBtn = document.getElementById('bot-tab-password');
-            if (botBtn) botBtn.className = "flex flex-col items-center justify-center flex-1 py-1 text-white font-semibold";
-
-            document.getElementById('modal-password').classList.remove('hidden');
-        }
-
-        function closeChangePasswordModal() {
-            document.getElementById('modal-password').classList.add('hidden');
-            const sideBtn = document.getElementById('side-tab-password');
-            if (sideBtn) sideBtn.className = "w-full flex items-center gap-3 px-4 py-2.5 rounded-xl font-medium text-sm transition hover:bg-slate-800 text-slate-400 hover:text-white";
-            const botBtn = document.getElementById('bot-tab-password');
-            if (botBtn) botBtn.className = "flex flex-col items-center justify-center flex-1 py-1 text-slate-400";
-        }
-
-        async function handleChangePasswordSubmit(e) {
-            e.preventDefault();
-            const currentPwd = document.getElementById('pwd-current').value.trim();
-            const newPwd = document.getElementById('pwd-new').value.trim();
-            const confirmPwd = document.getElementById('pwd-confirm').value.trim();
-
-            if (currentPwd !== app_current_user.password) {
-                triggerToast("รหัสผ่านปัจจุบันไม่ถูกต้อง โปรดตรวจสอบอีกครั้ง", "warning");
-                return;
-            }
-
-            if (newPwd !== confirmPwd) {
-                triggerToast("รหัสผ่านใหม่และการยืนยันรหัสผ่านไม่ตรงกัน", "warning");
-                return;
-            }
-
-            if (newPwd === currentPwd) {
-                triggerToast("รหัสผ่านใหม่ต้องไม่ซ้ำกับรหัสผ่านเดิมที่เคยตั้งไว้", "warning");
-                return;
-            }
-
-            showLoader(true);
-            try {
-                const { error } = await db_provider
-                    .from('app_users')
-                    .update({ password: newPwd })
-                    .eq('id', app_current_user.id);
-
-                if (error) throw error;
-
-                app_current_user.password = newPwd;
-                triggerToast("เปลี่ยนรหัสผ่านส่วนบุคคลสำเร็จเรียบร้อย", "success");
-                closeChangePasswordModal();
-            } catch (err) {
-                console.error(err);
-                triggerToast("เกิดข้อผิดพลาดจากฐานข้อมูล ไม่สามารถบันทึกรหัสผ่านได้", "danger");
-            }
-            showLoader(false);
-        }
-
-        async function renderExecutiveCharts() {
-            showLoader(true);
-            try {
-                const { data: exams } = await db_provider.from('exams').select('*');
-                global_exams_cache = exams || [];
-
-                const filterSub = document.getElementById('dash-filter-subject').value;
-                const filterGradeMode = document.getElementById('dash-filter-grade').value;
-
-                let filtered = global_exams_cache.filter(x => {
-                    if (filterSub !== 'All' && x.subject_group !== filterSub) return false;
-                    
-                    // อัปเดตเงื่อนไขการกรองกลุ่มระดับชั้น/ช่วงชั้นใหม่
-                    if (filterGradeMode === 'Primary' && !['ป.1','ป.2','ป.3','ป.4','ป.5','ป.6'].includes(x.grade_level)) return false;
-                    if (filterGradeMode === 'Secondary' && !['ม.1','ม.2','ม.3'].includes(x.grade_level)) return false;
-                    if (filterGradeMode === 'KeyStage1' && !['ป.1','ป.2','ป.3'].includes(x.grade_level)) return false;
-                    if (filterGradeMode === 'KeyStage2' && !['ป.4','ป.5','ป.6'].includes(x.grade_level)) return false;
-                    if (filterGradeMode === 'KeyStage3' && !['ม.1','ม.2','ม.3'].includes(x.grade_level)) return false;
-                    
-                    return true;
-                });
-
-                const gradesArr = ['ป.1','ป.2','ป.3','ป.4','ป.5','ป.6','ม.1','ม.2','ม.3'];
-                let gradeMetrics = {}; gradesArr.forEach(g => gradeMetrics[g] = 0);
-                let docCount = 0, pdfCount = 0;
-
-                filtered.forEach(x => {
-                    if (gradeMetrics[x.grade_level] !== undefined) gradeMetrics[x.grade_level]++;
-                    if (x.exam_file_name && (x.exam_file_name.endsWith('.doc') || x.exam_file_name.endsWith('.docx'))) docCount++;
-                    if (x.exam_file_name && x.exam_file_name.endsWith('.pdf')) pdfCount++;
-                    if (x.answer_file_name && (x.answer_file_name.endsWith('.doc') || x.answer_file_name.endsWith('.docx'))) docCount++;
-                    if (x.answer_file_name && x.answer_file_name.endsWith('.pdf')) pdfCount++;
-                });
-
-                const ctxG = document.getElementById('chartExecutiveGrades').getContext('2d');
-                if (handleChartGrades) handleChartGrades.destroy();
-                handleChartGrades = new Chart(ctxG, {
-                    type: 'bar',
-                    data: {
-                        labels: Object.keys(gradeMetrics),
-                        datasets: [{ label: 'จำนวนไฟล์ข้อสอบแยกตามห้องเรียน', data: Object.values(gradeMetrics), backgroundColor: '#4f46e5', borderRadius: 6 }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false }
-                });
-
-                const ctxF = document.getElementById('chartExecutiveFileTypes').getContext('2d');
-                if (handleChartFileTypes) handleChartFileTypes.destroy();
-                handleChartFileTypes = new Chart(ctxF, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['ไฟล์เอกสาร Word (.doc / .docx)', 'ไฟล์เอกสาร PDF (.pdf)'],
-                        datasets: [{ data: [docCount, pdfCount], backgroundColor: ['#3b82f6', '#ef4444'] }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false }
-                });
-
-            } catch (err) { console.error(err); }
-            showLoader(false);
-        }
-
-        async function fetchExams() {
-            try {
-                const keyword = document.getElementById('search-exam-keyword').value.toLowerCase();
-                const subFilter = document.getElementById('filter-exam-subject').value;
-                const gradeFilter = document.getElementById('filter-exam-grade').value;
-
-                let { data: exams } = await db_provider.from('exams').select('*').order('created_at', { ascending: false });
-                global_exams_cache = exams || [];
-
-                const container = document.getElementById('exams-container');
-                container.innerHTML = '';
-
-                let filtered = global_exams_cache.filter(x => {
-                    if (subFilter !== 'All' && x.subject_group !== subFilter) return false;
-                    if (gradeFilter !== 'All' && x.grade_level !== gradeFilter) return false;
-                    
-                    if (keyword) {
-                        const searchStr = `${x.topic} ${x.unit_name} ${x.learning_standard} ${x.indicator} ${x.uploaded_by_name}`.toLowerCase();
-                        if (!searchStr.includes(keyword)) return false;
-                    }
-                    return true;
-                });
-
-                if(filtered.length === 0) {
-                    container.innerHTML = `<div class="col-span-full text-center py-12 text-gray-400 bg-white rounded-2xl border border-dashed"><i data-lucide="folder-open" class="w-8 h-8 mx-auto mb-2 text-gray-300"></i>ไม่มีข้อมูลรายการข้อสอบจัดเก็บตรงตามเงื่อนไขที่ค้นหา</div>`;
-                    lucide.createIcons();
-                    return;
-                }
-
-                filtered.forEach(x => {
-                    const isOwner = app_current_user.role === 'Admin' || x.uploaded_by_id === app_current_user.id;
-                    const card = document.createElement('div');
-                    card.className = "bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition duration-200 slide-up";
-                    
-                    const coverImg = x.cover_image_url ? x.cover_image_url : 'https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=400&q=80';
-
-                    card.innerHTML = `
-                        <div class="h-32 bg-slate-100 relative overflow-hidden">
-                            <img src="${coverImg}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="w-full h-full object-cover" alt="Exam Cover">
-                            <div class="absolute inset-0 bg-slate-900/40 flex items-center justify-center hidden"><span class="text-white text-xs">ไม่สามารถแสดงรูปหน้าปกได้</span></div>
-                            <span class="absolute top-3 left-3 bg-indigo-600 text-white text-[11px] font-medium px-2.5 py-1 rounded-full shadow-sm">${x.grade_level} - ${x.subject_group}</span>
-                        </div>
-                        <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
-                            <div>
-                                <h4 class="font-bold text-slate-900 line-clamp-1">${x.topic}</h4>
-                                <p class="text-xs text-gray-500 font-medium line-clamp-1 mt-0.5">หน่วย: ${x.unit_name}</p>
-                                
-                                <div class="mt-3 space-y-1 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-[11px]">
-                                    <p class="text-slate-600"><span class="font-semibold text-slate-800">มาตรฐาน/ตัวชี้วัด:</span> ${x.learning_standard || '-'} / ${x.indicator || '-'}</p>
-                                    <p class="text-slate-600 line-clamp-2"><span class="font-semibold text-slate-800">สาระสำคัญ:</span> ${x.core_content || '-'}</p>
-                                    <p class="text-indigo-600 font-medium"><span class="font-semibold text-slate-800">K-P-A:</span> K:${x.k_objective || '-'} P:${x.p_objective || '-'} A:${x.a_objective || '-'}</p>
-                                </div>
-                            </div>
-
-                            <div class="space-y-2 border-t pt-3">
-                                <div class="flex items-center justify-between text-[11px] text-gray-400">
-                                    <span class="truncate">ผู้ส่ง: ${x.uploaded_by_name || 'ไม่ระบุ'}</span>
-                                    <button onclick="window.print()" class="text-indigo-500 hover:underline flex items-center gap-0.5"><i data-lucide="printer" class="w-3 h-3"></i>พิมพ์หน้านี้</button>
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-2 text-xs">
-                                    <a href="${x.exam_file_url || '#'}" target="_blank" class="bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-transparent hover:border-indigo-200 text-slate-700 p-2 rounded-xl text-center font-medium transition flex items-center justify-center gap-1"><i data-lucide="download" class="w-3 h-3"></i>ไฟล์ข้อสอบ</a>
-                                    <a href="${x.answer_file_url || '#'}" target="_blank" class="bg-slate-100 hover:bg-emerald-50 hover:text-emerald-600 border border-transparent hover:border-emerald-200 text-slate-700 p-2 rounded-xl text-center font-medium transition flex items-center justify-center gap-1"><i data-lucide="file-check" class="w-3 h-3"></i>ไฟล์เฉลย</a>
-                                </div>
-
-                                ${isOwner ? `
-                                <div class="grid grid-cols-2 gap-2 pt-1 border-dashed border-t">
-                                    <button onclick="editExamData(${x.id})" class="text-xs border border-gray-200 hover:border-indigo-500 text-slate-600 hover:text-indigo-600 p-1.5 rounded-lg transition">แก้ไขข้อมูล</button>
-                                    <button onclick="deleteExamData(${x.id})" class="text-xs border border-transparent hover:bg-red-50 text-red-500 p-1.5 rounded-lg transition">ลบไฟล์</button>
-                                </div>` : ''}
-                            </div>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-                lucide.createIcons();
-            } catch(e) { console.error(e); }
-        }
-
-        async function compressImageFile(file) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 500;
-                        const scaleSize = MAX_WIDTH / img.width;
-                        canvas.width = MAX_WIDTH;
-                        canvas.height = img.height * scaleSize;
-                        
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        canvas.toBlob((blob) => {
-                            resolve(new File([blob], file.name, { type: "image/jpeg", lastModified: Date.now() }));
-                        }, "image/jpeg", 0.7);
-                    };
-                };
-            });
-        }
-
-        async function uploadFileToBucket(file, folder = "docs") {
-            if (!file) return null;
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${folder}_${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
-            
-            const { data, error } = await db_provider.storage.from('img').upload(fileName, file);
-            if (error) throw error;
-            
-            const { data: publicData } = db_provider.storage.from('img').getPublicUrl(fileName);
-            return { name: file.name, url: publicData.publicUrl };
-        }
-
-        async function handleExamSubmit(e) {
-            e.preventDefault();
-
-            const basicCourseValue = document.getElementById('exam-basic-course').value.trim();
-            const additionalCourseValue = document.getElementById('exam-additional-course').value.trim();
-
-            if (!basicCourseValue && !additionalCourseValue) {
-                triggerToast("กรุณาระบุข้อมูลในช่อง 'รายวิชาพื้นฐาน' หรือ 'รายวิชาเพิ่มเติม' อย่างใดอย่างหนึ่ง", "warning");
-                return;
-            }
-
-            showLoader(true);
-            const examId = document.getElementById('exam-id').value;
-            const imgInput = document.getElementById('exam-img-input').files[0];
-            const examFileInp = document.getElementById('file-exam-doc').files[0];
-            const ansFileInp = document.getElementById('file-answer-doc').files[0];
-
-            try {
-                let coverImgUrl = null;
-                if (imgInput) {
-                    const compressed = await compressImageFile(imgInput);
-                    coverImgUrl = await uploadFileToBucket(compressed, "covers");
-                }
-
-                const uploadedExamFile = examFileInp ? await uploadFileToBucket(examFileInp, "exams") : null;
-                const uploadedAnsFile = ansFileInp ? await uploadFileToBucket(ansFileInp, "answers") : null;
-
-                const payload = {
-                    subject_group: document.getElementById('exam-subject').value,
-                    learning_standard: document.getElementById('exam-standard').value.trim(), 
-                    grade_level: document.getElementById('exam-grade').value,
-                    unit_name: document.getElementById('exam-unit').value.trim(),
-                    topic: document.getElementById('exam-topic').value.trim(),
-                    indicator: document.getElementById('exam-indicator').value.trim(),
-                    final_indicator: document.getElementById('exam-final-indicator').value.trim(),
-                    core_content: document.getElementById('exam-content').value.trim(),
-                    k_objective: document.getElementById('exam-obj-k').value.trim(),
-                    p_objective: document.getElementById('exam-obj-p').value.trim(),
-                    a_objective: document.getElementById('exam-obj-a').value.trim(),
-                    basic_course: basicCourseValue,
-                    additional_course: additionalCourseValue
-                };
-
-                if (coverImgUrl) payload.cover_image_url = coverImgUrl.url;
-                if (uploadedExamFile) { payload.exam_file_name = uploadedExamFile.name; payload.exam_file_url = uploadedExamFile.url; }
-                if (uploadedAnsFile) { payload.answer_file_name = uploadedAnsFile.name; payload.answer_file_url = uploadedAnsFile.url; }
-
-                if (!examId) {
-                    payload.uploaded_by_id = app_current_user.id;
-                    payload.uploaded_by_name = app_current_user.fullname;
-                    const { error } = await db_provider.from('exams').insert(payload);
-                    if(error) throw error;
-                    triggerToast("บันทึกข้อมูลอัปโหลดสำเร็จ", "success");
+                    await syncSystemData();
+                    switchPage('dashboard');
                 } else {
-                    const { error } = await db_provider.from('exams').update(payload).eq('id', examId);
-                    if(error) throw error;
-                    triggerToast("อัปเดตข้อมูลรายละเอียดเรียบร้อย", "success");
+                    triggerToast('ชื่อผู้ใช้หรือรหัสผ่านผิดพลาด', 'danger');
                 }
-
-                closeExamModal();
-                fetchExams();
             } catch (err) {
-                console.error(err);
-                triggerToast("เกิดข้อผิดพลาดในการดำเนินบันทึกข้อมูล", "danger");
+                triggerToast(err.message, 'danger');
+            } finally {
+                toggleLoader(false);
             }
-            showLoader(false);
         }
 
-        async function editExamData(id) {
-            const item = global_exams_cache.find(x => x.id === id);
-            if (!item) return;
+        function processLogout() {
+            globalSession = { user: null, role: 'Guest' };
+            toggleModal('logout-modal', false);
+            triggerToast('ออกจากระบบเรียบร้อยแล้ว', 'warning');
+            switchPage('landing');
+        }
 
-            document.getElementById('exam-id').value = item.id;
-            document.getElementById('exam-subject').value = item.subject_group;
-            document.getElementById('exam-grade').value = item.grade_level;
-            document.getElementById('exam-unit').value = item.unit_name;
-            document.getElementById('exam-topic').value = item.topic;
-            document.getElementById('exam-standard').value = item.learning_standard || '';
-            document.getElementById('exam-indicator').value = item.indicator || '';
-            document.getElementById('exam-final-indicator').value = item.final_indicator || '';
-            document.getElementById('exam-content').value = item.core_content || '';
-            document.getElementById('exam-obj-k').value = item.k_objective || '';
-            document.getElementById('exam-obj-p').value = item.p_objective || '';
-            document.getElementById('exam-obj-a').value = item.a_objective || '';
-
-            document.getElementById('exam-basic-course').value = item.basic_course || '';
-            document.getElementById('exam-additional-course').value = item.additional_course || '';
-
-            document.getElementById('label-existing-exam').classList.toggle('hidden', !item.exam_file_url);
-            document.getElementById('label-existing-answer').classList.toggle('hidden', !item.answer_file_url);
+        async function changeSelfPassword() {
+            const newPassword = document.getElementById('self-new-password').value;
+            if(!newPassword) { triggerToast('กรุณากรอกรหัสผ่านใหม่', 'danger'); return; }
             
-            document.getElementById('exam-modal-title').innerText = "แก้ไขข้อมูลคลังเอกสารข้อสอบ";
-            document.getElementById('modal-exam').classList.remove('hidden');
-        }
-
-        function deleteExamData(id) {
-            openConfirmModal("ลบไฟล์ข้อสอบชิ้นนี้?", "ข้อมูลเอกสารและประวัติคลังทั้งหมดของหัวข้อนี้จะถูกนำออกจากระบบถาวร", "bg-red-600", async () => {
-                showLoader(true);
-                const { error } = await db_provider.from('exams').delete().eq('id', id);
-                showLoader(false);
-                if (!error) {
-                    triggerToast("ลบข้อมูลออกจากคลังข้อสอบสำเร็จ", "success");
-                    fetchExams();
-                } else {
-                    triggerToast("ไม่สามารถทำรายการลบได้", "danger");
-                }
-            });
-        }
-
-        function openExamModal() {
-            document.getElementById('form-exam').reset();
-            document.getElementById('exam-id').value = '';
-            document.getElementById('label-existing-exam').classList.add('hidden');
-            document.getElementById('label-existing-answer').classList.add('hidden');
-            document.getElementById('exam-modal-title').innerText = "เพิ่มอัปโหลดข้อสอบเข้าคลังออนไลน์";
-            document.getElementById('modal-exam').classList.remove('hidden');
-        }
-        function closeExamModal() { document.getElementById('modal-exam').classList.add('hidden'); }
-
-        async function fetchUsers() {
-            if (app_current_user && app_current_user.role === 'Teacher') return;
+            toggleLoader(true);
             try {
-                const { data, error } = await db_provider.from('app_users').select('*').order('id', { ascending: true });
-                if (error) return;
-                global_users_cache = data || [];
-
-                const tbody = document.getElementById('users-table-body');
-                tbody.innerHTML = '';
-
-                global_users_cache.forEach((u, index) => {
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 transition border-b border-gray-100";
-                    tr.innerHTML = `
-                        <td class="p-4 font-medium text-gray-400">${index + 1}</td>
-                        <td class="p-4 font-semibold text-slate-900">${u.fullname}</td>
-                        <td class="p-4 text-slate-600">${u.username}</td>
-                        <td class="p-4">
-                            <span class="px-2 py-1 text-xs rounded-lg font-medium ${u.role === 'Admin' ? 'bg-indigo-100 text-indigo-700 border border-indigo-200' : 'bg-slate-100 text-slate-700'}">${u.role}</span>
-                        </td>
-                        <td class="p-4 text-right space-x-2">
-                            <button onclick="editUserData(${u.id})" class="text-xs text-indigo-600 hover:underline">แก้ไข</button>
-                            <button onclick="deleteUserData(${u.id})" class="text-xs text-red-500 hover:underline">ลบ</button>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
+                await coreStorageEngine.fetch(`system_users?id=eq.${globalSession.user.id}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ password: newPassword })
                 });
-            } catch(e) {}
+                triggerToast('เปลี่ยนรหัสผ่านของคุณเรียบร้อยแล้ว');
+                document.getElementById('self-new-password').value = '';
+            } catch (err) {
+                triggerToast(err.message, 'danger');
+            } finally {
+                toggleLoader(false);
+            }
         }
 
-        async function handleUserSubmit(e) {
+        function openUserModal(id = null) {
+            document.getElementById('form-user-data').reset();
+            document.getElementById('fx-user-id').value = '';
+            document.getElementById('fx-user-username').disabled = false;
+            document.getElementById('fx-user-password-container').classList.remove('hidden');
+            document.getElementById('fx-user-password').required = true;
+            document.getElementById('user-modal-title').innerText = "เพิ่มผู้ใช้งานใหม่";
+
+            if (id) {
+                const target = loadedUsers.find(u => u.id === id);
+                if (!target) return;
+                document.getElementById('fx-user-id').value = target.id;
+                document.getElementById('fx-user-username').value = target.username;
+                document.getElementById('fx-user-username').disabled = true; 
+                document.getElementById('fx-user-fullname').value = target.full_name;
+                document.getElementById('fx-user-role').value = target.role;
+                document.getElementById('fx-user-password').required = false; 
+                document.getElementById('user-modal-title').innerText = `แก้ไขข้อมูลครู: ${target.username}`;
+            }
+            toggleModal('user-modal', true);
+        }
+
+        async function saveUserDocument(e) {
             e.preventDefault();
-            showLoader(true);
-            const uid = document.getElementById('user-id').value;
-            const payload = {
-                fullname: document.getElementById('user-fullname').value.trim(),
-                username: document.getElementById('user-username').value.trim(),
-                password: document.getElementById('user-password').value.trim(),
-                role: document.getElementById('user-role').value
+            const recordId = document.getElementById('fx-user-id').value;
+            const passValue = document.getElementById('fx-user-password').value;
+            
+            const bodyData = {
+                full_name: document.getElementById('fx-user-fullname').value,
+                role: document.getElementById('fx-user-role').value
             };
 
+            if (passValue) bodyData.password = passValue;
+            if (!recordId) bodyData.username = document.getElementById('fx-user-username').value;
+
+            toggleLoader(true);
             try {
-                if (!uid) {
-                    const { error } = await db_provider.from('app_users').insert(payload);
-                    if(error) throw error;
-                    triggerToast("เพิ่มบัญชีผู้ใช้ระบบคนใหม่เสร็จสิ้น", "success");
+                if (!recordId) {
+                    await coreStorageEngine.fetch('system_users', { method: 'POST', body: JSON.stringify(bodyData) });
+                    triggerToast("สร้างผู้ใช้งานระบบสำเร็จ");
                 } else {
-                    const { error } = await db_provider.from('app_users').update(payload).eq('id', uid);
-                    if(error) throw error;
-                    triggerToast("ปรับปรุงแก้ไขสิทธิ์บัญชีเรียบร้อย", "success");
+                    await coreStorageEngine.fetch(`system_users?id=eq.${recordId}`, { method: 'PATCH', body: JSON.stringify(bodyData) });
+                    triggerToast("แก้ไขข้อมูลผู้ใช้เรียบร้อย");
                 }
-                closeUserModal();
-                fetchUsers();
-            } catch(e) { triggerToast("ชื่อผู้ใช้นี้ถูกใช้งานแล้วในระบบหลัก", "danger"); }
-            showLoader(false);
+                toggleModal('user-modal', false);
+                await syncSystemData();
+            } catch (err) {
+                triggerToast("ข้อผิดพลาดในการบันทึกผู้ใช้", 'danger');
+            } finally {
+                toggleLoader(false);
+            }
         }
 
-        function editUserData(id) {
-            const u = global_users_cache.find(x => x.id === id);
-            if (!u) return;
-            document.getElementById('user-id').value = u.id;
-            document.getElementById('user-fullname').value = u.fullname;
-            document.getElementById('user-username').value = u.username;
-            document.getElementById('user-password').value = u.password;
-            document.getElementById('user-role').value = u.role;
+        async function deleteUserDocument(id) {
+            if (id === globalSession.user.id) { triggerToast("คุณไม่สามารถลบบัญชีที่กำลังใช้งานอยู่ได้", "danger"); return; }
+            if (!confirm("ยืนยันที่จะลบผู้ใช้รายนี้ออกจากระบบ?")) return;
             
-            document.getElementById('user-modal-title').innerText = "แก้ไขข้อมูลสิทธิ์สมาชิก";
-            document.getElementById('modal-user').classList.remove('hidden');
+            toggleLoader(true);
+            try {
+                await coreStorageEngine.fetch(`system_users?id=eq.${id}`, { method: 'DELETE' });
+                triggerToast("ลบผู้ใช้งานสำเร็จ", "warning");
+                await syncSystemData();
+            } catch (err) {
+                triggerToast(err.message, 'danger');
+            } finally {
+                toggleLoader(false);
+            }
         }
 
-        function deleteUserData(id) {
-            if(id === app_current_user.id) {
-                triggerToast("ไม่สามารถดำเนินการลบบัญชีตัวเองที่กำลังใช้งานได้", "warning");
+        function renderUsersTable() {
+            const tbody = document.getElementById('table-users-body');
+            if (!loadedUsers || loadedUsers.length === 0) return;
+            if (tbody) {
+                tbody.innerHTML = loadedUsers.map(u => `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-4 font-bold text-slate-700">${u.username}</td>
+                        <td class="p-4 text-slate-600">${u.full_name}</td>
+                        <td class="p-4"><span class="px-2.5 py-1 text-xs font-bold rounded-full ${u.role === 'Admin' ? 'bg-blue-50 text-blue-700':'bg-slate-100 text-slate-700'}">${u.role}</span></td>
+                        <td class="p-4 text-xs text-slate-400">${new Date(u.created_at).toLocaleDateString('th-TH')}</td>
+                        <td class="p-4 text-right">
+                            <div class="flex gap-1 justify-end">
+                                <button onclick="openUserModal(${u.id})" class="p-1.5 hover:bg-slate-100 rounded-lg text-blue-600 transition"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                                <button onclick="deleteUserDocument(${u.id})" class="p-1.5 hover:bg-red-50 rounded-lg text-red-600 transition"><i data-lucide="user-x" class="w-4 h-4"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+                lucide.createIcons();
+            }
+        }
+
+        function renderExamTable() {
+            const tbody = document.getElementById('table-exams-body');
+            const search = document.getElementById('filter-search').value.toLowerCase();
+            const groupF = document.getElementById('filter-group').value;
+            const gradeF = document.getElementById('filter-grade').value;
+
+            const filtered = loadedExams.filter(item => {
+                const matchSearch = !search || 
+                    item.subject_code.toLowerCase().includes(search) || 
+                    item.subject_name.toLowerCase().includes(search) || 
+                    item.topic_name.toLowerCase().includes(search);
+                const matchGroup = !groupF || item.subject_group === groupF;
+                const matchGrade = !gradeF || item.grade_level === gradeF;
+                return matchSearch && matchGroup && matchGrade;
+            });
+
+            if (!tbody) return;
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-8 text-center text-xs text-slate-400">ไม่พบข้อมูลเอกสารข้อสอบ</td></tr>`;
                 return;
             }
-            openConfirmModal("ลบบัญชีรายชื่อบุคลากร?", "ผู้ใช้ท่านนี้จะไม่สามารถล็อคอินเข้าคลังข้อมูลโรงเรียนได้อีกต่อไป", "bg-red-600", async () => {
-                const { error } = await db_provider.from('app_users').delete().eq('id', id);
-                if(!error) { triggerToast("ลบบัญชีสิทธิ์ผู้ใช้เรียบร้อย", "success"); fetchUsers(); }
+
+            tbody.innerHTML = filtered.map(item => {
+                const isOwner = globalSession.role === 'Admin' || (globalSession.user && item.uploaded_by === globalSession.user.username);
+                const actionBtns = isOwner ? `
+                    <div class="flex gap-1 justify-end">
+                        <button onclick="openExamForm(${item.id})" class="p-1.5 hover:bg-slate-100 rounded-lg text-amber-600 transition"><i data-lucide="edit-2" class="w-4 h-4"></i></button>
+                        <button onclick="deleteExamDocument(${item.id})" class="p-1.5 hover:bg-red-50 rounded-lg text-red-600 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                ` : `<span class="text-[11px] text-slate-300 font-medium">ไม่มีสิทธิ์จัดการ</span>`;
+
+                const operatorUser = loadedUsers.find(u => u.username === item.uploaded_by);
+                const operatorDisplayName = operatorUser ? operatorUser.full_name : item.uploaded_by;
+
+                let displayYear = parseInt(item.academic_year);
+                if (displayYear < 2400) displayYear = displayYear + 543;
+
+                return `
+                    <tr class="hover:bg-slate-50/80 transition">
+                        <td class="p-4">
+                            <span class="text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">ปี ${displayYear}</span>
+                            <div class="font-bold text-slate-700 mt-1">${item.subject_code}</div>
+                        </td>
+                        <td class="p-4">
+                            <div class="font-semibold text-slate-800">${item.subject_name}</div>
+                            <div class="text-xs text-slate-400 mt-0.5">${item.grade_level}</div>
+                        </td>
+                        <td class="p-4 text-xs font-medium text-slate-500">${item.subject_group}</td>
+                        <td class="p-4 text-xs max-w-xs font-medium text-slate-700">${item.topic_name}</td>
+                        <td class="p-4">
+                            <div class="flex gap-2">
+                                <a href="${item.exam_file_url}" target="_blank" class="flex items-center gap-1 text-[11px] font-bold text-blue-600 hover:underline">
+                                    <i data-lucide="file" class="w-3.5 h-3.5"></i> ข้อสอบ
+                                </a>
+                                <a href="${item.answer_file_url}" target="_blank" class="flex items-center gap-1 text-[11px] font-bold text-emerald-600 hover:underline">
+                                    <i data-lucide="file-check" class="w-3.5 h-3.5"></i> เฉลย
+                                </a>
+                            </div>
+                        </td>
+                        <td class="p-4 text-xs text-slate-600 font-medium">${operatorDisplayName}</td>
+                        <td class="p-4 text-right">${actionBtns}</td>
+                    </tr>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function openExamForm(id = null) {
+            document.getElementById('form-exam-data').reset();
+            document.getElementById('fx-current-exam-url').innerText = '';
+            document.getElementById('fx-current-answer-url').innerText = '';
+            
+            if(!id) {
+                document.getElementById('form-exam-id').value = '';
+                document.getElementById('fx-year').value = 2569; 
+                switchPage('exam-form');
+            } else {
+                const target = loadedExams.find(x => x.id === id);
+                if(!target) return;
+                
+                document.getElementById('form-exam-id').value = target.id;
+                let editYear = parseInt(target.academic_year);
+                if (editYear < 2400) editYear += 543;
+
+                document.getElementById('fx-year').value = editYear;
+                document.getElementById('fx-code').value = target.subject_code;
+                document.getElementById('fx-name').value = target.subject_name;
+                document.getElementById('fx-group').value = target.subject_group;
+                document.getElementById('fx-grade').value = target.grade_level;
+                document.getElementById('fx-unit').value = target.unit_name;
+                document.getElementById('fx-topic').value = target.topic_name;
+                document.getElementById('fx-standard').value = target.learning_standard;
+                document.getElementById('fx-indicator').value = target.indicator;
+                document.getElementById('fx-essential').value = target.essential_concept;
+                document.getElementById('fx-obj-k').value = target.objective_k;
+                document.getElementById('fx-obj-p').value = target.objective_p;
+                document.getElementById('fx-obj-a').value = target.objective_a;
+                
+                document.getElementById('fx-current-exam-url').innerText = `ไฟล์เดิม: ${target.exam_file_url}`;
+                document.getElementById('fx-current-answer-url').innerText = `ไฟล์เดิม: ${target.answer_file_url}`;
+                switchPage('exam-form');
+            }
+        }
+
+        async function saveExamDocument(e) {
+            e.preventDefault();
+            toggleLoader(true);
+            const recordId = document.getElementById('form-exam-id').value;
+            const fileExamInput = document.getElementById('fx-file-exam').files[0];
+            const fileAnswerInput = document.getElementById('fx-file-answer').files[0];
+
+            try {
+                let examUrl = recordId ? loadedExams.find(x => x.id == recordId).exam_file_url : "";
+                let answerUrl = recordId ? loadedExams.find(x => x.id == recordId).answer_file_url : "";
+
+                if (fileExamInput) examUrl = await coreStorageEngine.uploadFile('img', `exam_${Date.now()}_${fileExamInput.name}`, fileExamInput);
+                if (fileAnswerInput) answerUrl = await coreStorageEngine.uploadFile('img', `answer_${Date.now()}_${fileAnswerInput.name}`, fileAnswerInput);
+
+                if (!examUrl || !answerUrl) throw new Error("กรุณาแนบไฟล์ข้อสอบและเฉลย");
+
+                const bodyData = {
+                    academic_year: parseInt(document.getElementById('fx-year').value),
+                    subject_group: document.getElementById('fx-group').value,
+                    subject_code: document.getElementById('fx-code').value,
+                    subject_name: document.getElementById('fx-name').value,
+                    learning_standard: document.getElementById('fx-standard').value,
+                    indicator: document.getElementById('fx-indicator').value,
+                    grade_level: document.getElementById('fx-grade').value,
+                    unit_name: document.getElementById('fx-unit').value,
+                    topic_name: document.getElementById('fx-topic').value,
+                    essential_concept: document.getElementById('fx-essential').value,
+                    objective_k: document.getElementById('fx-obj-k').value,
+                    objective_p: document.getElementById('fx-obj-p').value,
+                    objective_a: document.getElementById('fx-obj-a').value,
+                    exam_file_url: examUrl,
+                    answer_file_url: answerUrl,
+                    uploaded_by: globalSession.user ? globalSession.user.username : 'admin01'
+                };
+
+                if (!recordId) {
+                    await coreStorageEngine.fetch('exam_documents', { method: 'POST', body: JSON.stringify(bodyData) });
+                    triggerToast("บันทึกข้อมูลข้อสอบใหม่สำเร็จ");
+                } else {
+                    await coreStorageEngine.fetch(`exam_documents?id=eq.${recordId}`, { method: 'PATCH', body: JSON.stringify(bodyData) });
+                    triggerToast("ปรับปรุงข้อมูลสำเร็จ");
+                }
+
+                await syncSystemData();
+                switchPage('archive');
+            } catch (err) {
+                triggerToast(err.message, 'danger');
+            } finally {
+                toggleLoader(false);
+            }
+        }
+
+        async function deleteExamDocument(id) {
+            if (!confirm("ต้องการลบเอกสารข้อสอบชิ้นนี้?")) return;
+            toggleLoader(true);
+            try {
+                await coreStorageEngine.fetch(`exam_documents?id=eq.${id}`, { method: 'DELETE' });
+                triggerToast("ลบข้อมูลสำเร็จ");
+                await syncSystemData();
+            } catch (err) {
+                triggerToast(err.message, 'danger');
+            } finally {
+                toggleLoader(false);
+            }
+        }
+
+        function refreshDashboardCharts() {
+            const gradesList = ["ประถมศึกษาปีที่ 1", "ประถมศึกษาปีที่ 2", "ประถมศึกษาปีที่ 3", "ประถมศึกษาปีที่ 4", "ประถมศึกษาปีที่ 5", "ประถมศึกษาปีที่ 6", "มัธยมศึกษาปีที่ 1", "มัธยมศึกษาปีที่ 2", "มัธยมศึกษาปีที่ 3"];
+            const shortGrades = ["ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6", "ม.1", "ม.2", "ม.3"];
+            const subjectConfigs = [
+                { name: "ภาษาไทย", canvasId: "chart-thai", color: "#4f46e5" },
+                { name: "คณิตศาสตร์", canvasId: "chart-math", color: "#10b981" },
+                { name: "วิทยาศาสตร์และเทคโนโลยี", canvasId: "chart-science", color: "#2563eb" },
+                { name: "สังคมศึกษา ศาสนา และวัฒนธรรม", canvasId: "chart-social", color: "#d97706" },
+                { name: "สุขศึกษาและพลศึกษา", canvasId: "chart-health", color: "#ef4444" },
+                { name: "ศิลปะ", canvasId: "chart-arts", color: "#8b5cf6" },
+                { name: "การงานอาชีพ", canvasId: "chart-career", color: "#f97316" },
+                { name: "ภาษาต่างประเทศ", canvasId: "chart-foreign", color: "#14b8a6" }
+            ];
+
+            subjectConfigs.forEach(config => {
+                const el = document.getElementById(config.canvasId);
+                if (!el) return;
+                const dataCounts = gradesList.map(grade => loadedExams.filter(x => x.subject_group === config.name && x.grade_level === grade).length);
+                if (chartsInstance[config.canvasId]) chartsInstance[config.canvasId].destroy();
+
+                const ctx = el.getContext('2d');
+                chartsInstance[config.canvasId] = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: shortGrades,
+                        datasets: [{ label: 'จำนวนไฟล์ข้อสอบ (ชุด)', data: dataCounts, backgroundColor: config.color, borderRadius: 6 }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } }
+                    }
+                });
             });
         }
 
-        function openUserModal() {
-            document.getElementById('form-user').reset();
-            document.getElementById('user-id').value = '';
-            document.getElementById('user-modal-title').innerText = "เพิ่มบัญชีผู้ใช้งานระบบ";
-            document.getElementById('modal-user').classList.remove('hidden');
-        }
-        function closeUserModal() { document.getElementById('modal-user').classList.add('hidden'); }
-
-        function exportFullExamsReport() {
-            if (global_exams_cache.length === 0) {
-                triggerToast("ไม่มีข้อมูลสารสนเทศจัดเก็บในคลังสำหรับแปลงไฟล์รายงาน", "warning");
-                return;
-            }
-            
-            let csvContent = "\uFEFFกลุ่มสาระการเรียนรู้,ระดับชั้น,ชื่อหน่วยการเรียนรู้,เรื่องที่สอน,ตัวชี้วัด,ผู้บันทึกคลัง\n";
-            global_exams_cache.forEach(x => {
-                csvContent += `"${x.subject_group}","${x.grade_level}","${x.unit_name}","${x.topic}","${x.indicator || '-'}","${x.uploaded_by_name || '-'}"\n`;
+        function exportExamsToCSV() {
+            if (loadedExams.length === 0) { triggerToast("ไม่มีข้อมูลให้ออกรายงาน", "warning"); return; }
+            let csvContent = "\uFEFFปีการศึกษา,กลุ่มสาระฯ,รหัสวิชา,ชื่อรายวิชา,ระดับชั้น,หน่วยการเรียนรู้,เรื่อง,ผู้ดำเนินการ\n";
+            loadedExams.forEach(x => {
+                const operatorUser = loadedUsers.find(u => u.username === x.uploaded_by);
+                const operatorDisplayName = operatorUser ? operatorUser.full_name : x.uploaded_by;
+                let csvYear = parseInt(x.academic_year);
+                if (csvYear < 2400) csvYear += 543;
+                csvContent += `"${csvYear}","${x.subject_group}","${x.subject_code}","${x.subject_name}","${x.grade_level}","${x.unit_name}","${x.topic_name}","${operatorDisplayName}"\n`;
             });
-
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
             const link = document.createElement("a");
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute("download", `รายงานสารสนเทศคลังข้อสอบ_${Date.now()}.csv`);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `รายงานจัดการข้อสอบ_${Date.now()}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-            triggerToast("สร้างไฟล์รายงานสารสนเทศสถิติ (CSV) สำเร็จ", "success");
         }
 
-        let currentConfirmCallback = null;
-        function openConfirmModal(title, msg, colorClass, actionCallback) {
-            document.getElementById('confirm-title').innerText = title;
-            document.getElementById('confirm-message').innerText = msg;
-            
-            const btn = document.getElementById('btn-confirm-action');
-            btn.className = `text-white px-5 py-2 rounded-xl text-xs transition font-medium shadow ${colorClass}`;
-            
-            currentConfirmCallback = actionCallback;
-            document.getElementById('modal-confirm').classList.remove('hidden');
-        }
-        function closeConfirmModal() { document.getElementById('modal-confirm').classList.add('hidden'); }
-        
-        document.getElementById('btn-confirm-action').addEventListener('click', () => {
-            if (currentConfirmCallback) currentConfirmCallback();
-            closeConfirmModal();
+        window.addEventListener('DOMContentLoaded', async () => {
+            switchPage('landing');
+            await syncSystemData();
+            lucide.createIcons();
         });
     </script>
 </body>
