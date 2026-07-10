@@ -13,13 +13,13 @@
     <style>
         body {
             font-family: 'Kanit', sans-serif;
-            background-color: #f0f7f9;
+            background-color: #f0f4f8;
         }
         .glass-nav {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(165, 214, 224, 0.4);
+            border-bottom: 1px solid rgba(147, 197, 253, 0.4);
         }
         .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         .slide-up { animation: slideUp 0.4s ease-out forwards; }
@@ -31,7 +31,7 @@
 
     <div id="global-loader" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[9999] flex items-center justify-center hidden">
         <div class="bg-white p-6 rounded-2xl shadow-xl flex flex-col items-center gap-4">
-            <div class="w-12 h-12 border-4 border-teal-600 border-t-transparent rounded-full animate-spin"></div>
+            <div class="w-12 h-12 border-4 border-blue-700 border-t-transparent rounded-full animate-spin"></div>
             <p class="text-sm font-medium text-slate-600">กำลังประมวลผล...</p>
         </div>
     </div>
@@ -56,26 +56,26 @@
                 <input type="hidden" id="fx-user-id">
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-slate-500">ชื่อผู้ใช้งาน (Username) <span class="text-red-500">*</span></label>
-                    <input type="text" id="fx-user-username" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-teal-600 transition">
+                    <input type="text" id="fx-user-username" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-blue-700 transition">
                 </div>
                 <div class="flex flex-col gap-1.5" id="fx-user-password-container">
                     <label class="text-xs font-semibold text-slate-500">รหัสผ่าน (Password) <span class="text-red-500">*</span></label>
-                    <input type="password" id="fx-user-password" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-teal-600 transition">
+                    <input type="password" id="fx-user-password" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-blue-700 transition">
                 </div>
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-slate-500">ชื่อ-นามสกุลจริง <span class="text-red-500">*</span></label>
-                    <input type="text" id="fx-user-fullname" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-teal-600 transition">
+                    <input type="text" id="fx-user-fullname" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-blue-700 transition">
                 </div>
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-semibold text-slate-500">สิทธิ์การเข้าถึงระบบ <span class="text-red-500">*</span></label>
-                    <select id="fx-user-role" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-teal-600 transition">
+                    <select id="fx-user-role" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-blue-700 transition">
                         <option value="Teacher">Teacher (ครูผู้สอน)</option>
                         <option value="Admin">Admin (ผู้ดูแลระบบ)</option>
                     </select>
                 </div>
                 <div class="flex gap-3 justify-end mt-2">
                     <button type="button" onclick="toggleModal('user-modal', false)" class="px-4 py-2 text-sm font-medium text-slate-500 hover:bg-slate-100 rounded-xl transition">ยกเลิก</button>
-                    <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-teal-600 hover:bg-teal-700 rounded-xl transition">บันทึกข้อมูล</button>
+                    <button type="submit" class="px-4 py-2 text-sm font-bold text-white bg-blue-700 hover:bg-blue-800 rounded-xl transition">บันทึกข้อมูล</button>
                 </div>
             </form>
         </div>
@@ -88,19 +88,19 @@
                     <img src="https://jedzadakorn.github.io/ItemBank/images/logo.png" alt="School Logo" class="w-full h-full object-contain">
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-[10px] font-bold tracking-wider text-teal-600 uppercase leading-none">ระบบคลังข้อสอบออนไลน์</span>
+                    <span class="text-[10px] font-bold tracking-wider text-blue-700 uppercase leading-none">ระบบคลังข้อสอบออนไลน์</span>
                     <h1 class="text-sm font-bold text-slate-800 mt-0.5">โรงเรียนทนาพรวิทยา</h1>
                 </div>
             </div>
-            <div class="hidden md:flex items-center gap-1 bg-slate-500/5 p-1 rounded-xl border border-teal-100/30" id="desktop-menu-list"></div>
+            <div class="hidden md:flex items-center gap-1 bg-slate-500/5 p-1 rounded-xl border border-blue-100/30" id="desktop-menu-list"></div>
             <div class="flex items-center gap-3">
-                <div id="nav-user-card" class="hidden items-center px-3 py-1 bg-teal-50/60 rounded-xl border border-teal-200/40">
+                <div id="nav-user-card" class="hidden items-center px-3 py-1 bg-blue-50/60 rounded-xl border border-blue-200/40">
                     <div class="text-left">
                         <p class="text-xs font-semibold text-slate-800 leading-none truncate max-w-[120px]" id="nav-user-name">Guest</p>
-                        <p class="text-[9px] text-teal-600 font-bold uppercase mt-0.5" id="nav-user-role">VIEWER</p>
+                        <p class="text-[9px] text-blue-700 font-bold uppercase mt-0.5" id="nav-user-role">VIEWER</p>
                     </div>
                 </div>
-                <button id="btn-top-auth" onclick="switchPage('landing')" class="flex items-center gap-2 px-4 py-1.5 text-xs font-bold text-white bg-teal-600 hover:bg-teal-700 rounded-xl transition shadow-xs cursor-pointer">
+                <button id="btn-top-auth" onclick="switchPage('landing')" class="flex items-center gap-2 px-4 py-1.5 text-xs font-bold text-white bg-blue-700 hover:bg-blue-800 rounded-xl transition shadow-xs cursor-pointer">
                     <i data-lucide="home" class="w-3.5 h-3.5"></i> หน้าแรก
                 </button>
             </div>
@@ -109,17 +109,17 @@
 
     <main id="main-content-area" class="flex-1 flex flex-col w-full mx-auto pb-24 md:pb-8">
         
-        <div class="max-w-7xl w-full mx-auto px-4 md:px-8 mt-6 mb-2 flex justify-between items-center border-b border-teal-100/50 pb-3 hidden" id="sub-page-header">
+        <div class="max-w-7xl w-full mx-auto px-4 md:px-8 mt-6 mb-2 flex justify-between items-center border-b border-blue-100/50 pb-3 hidden" id="sub-page-header">
             <div class="flex items-center gap-2">
-                <i data-lucide="layout-dashboard" class="w-5 h-5 text-teal-600" id="title-icon"></i>
+                <i data-lucide="layout-dashboard" class="w-5 h-5 text-blue-700" id="title-icon"></i>
                 <span id="page-title" class="text-lg font-bold text-slate-700"></span>
             </div>
         </div>
 
         <div class="flex-1 w-full">
             
-            <section id="page-landing" class="view-section fade-in w-full min-h-[calc(100vh-4rem)] bg-linear-to-br from-slate-50 via-teal-50/20 to-teal-100/30 relative flex items-center">
-                <div class="absolute top-0 right-0 w-1/2 h-full bg-teal-600/5 clip-path rounded-l-[100px] pointer-events-none hidden lg:block"></div>
+            <section id="page-landing" class="view-section fade-in w-full min-h-[calc(100vh-4rem)] bg-linear-to-br from-slate-50 via-blue-50/20 to-blue-100/30 relative flex items-center">
+                <div class="absolute top-0 right-0 w-1/2 h-full bg-blue-700/5 clip-path rounded-l-[100px] pointer-events-none hidden lg:block"></div>
                 
                 <div class="max-w-7xl w-full mx-auto px-4 md:px-8 py-10 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
                     
@@ -129,7 +129,7 @@
                                 <img src="https://jedzadakorn.github.io/ItemBank/images/logo.png" alt="โรงเรียนทนาพรวิทยา โลโก้" class="w-full h-full object-contain">
                             </div>
                             <div class="flex flex-col text-left">
-                                <h2 class="text-xl font-bold tracking-wide text-teal-950 leading-tight">โรงเรียนทนาพรวิทยา</h2>
+                                <h2 class="text-xl font-bold tracking-wide text-blue-950 leading-tight">โรงเรียนทนาพรวิทยา</h2>
                                 <p class="text-xs text-slate-400 font-medium tracking-widest uppercase">THANAPORNWITTAYA SCHOOL</p>
                             </div>
                         </div>
@@ -137,31 +137,31 @@
                         <div class="flex flex-col gap-3">
                             <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-slate-900 leading-tight">
                                 ระบบคลังข้อสอบออนไลน์ <br>
-                                <span class="text-teal-600">โรงเรียนทนาพรวิทยา</span>
+                                <span class="text-blue-700">โรงเรียนทนาพรวิทยา</span>
                             </h1>
-                            <div class="w-16 h-1 bg-teal-600 rounded-full my-1 mx-auto lg:mx-0"></div>
+                            <div class="w-16 h-1 bg-blue-700 rounded-full my-1 mx-auto lg:mx-0"></div>
                             <p class="text-slate-600 text-sm md:text-base font-normal max-w-xl leading-relaxed">
                                 รวมเอกสารข้อสอบ พร้อมเฉลย ทุกกลุ่มสาระการเรียนรู้ ระดับชั้นประถมศึกษา และมัธยมศึกษาตอนต้น ตามหลักสูตรแกนกลางการศึกษาขั้นพื้นฐาน พุทธศักราช 2551 (ฉบับปรับปรุง พ.ศ. 2560)
                             </p>
                         </div>
 
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mt-4">
-                            <div class="bg-white/90 backdrop-blur-xs p-4 rounded-2xl border border-teal-100 shadow-3xs flex flex-col items-center lg:items-start text-center lg:text-left gap-2">
-                                <div class="w-10 h-10 bg-teal-50 text-teal-600 rounded-xl flex items-center justify-center"><i data-lucide="folder-heart" class="w-5 h-5"></i></div>
+                            <div class="bg-white/90 backdrop-blur-xs p-4 rounded-2xl border border-blue-100 shadow-3xs flex flex-col items-center lg:items-start text-center lg:text-left gap-2">
+                                <div class="w-10 h-10 bg-blue-50 text-blue-700 rounded-xl flex items-center justify-center"><i data-lucide="folder-heart" class="w-5 h-5"></i></div>
                                 <h3 class="text-xs font-bold text-slate-800">จัดเก็บเป็นระบบ</h3>
                                 <p class="text-[11px] text-slate-400">ค้นหาง่าย แยกหมวดหมู่ชัดเจน</p>
                             </div>
-                            <div class="bg-white/90 backdrop-blur-xs p-4 rounded-2xl border border-teal-100 shadow-3xs flex flex-col items-center lg:items-start text-center lg:text-left gap-2">
-                                <div class="w-10 h-10 bg-cyan-50 text-cyan-600 rounded-xl flex items-center justify-center"><i data-lucide="search-code" class="w-5 h-5"></i></div>
+                            <div class="bg-white/90 backdrop-blur-xs p-4 rounded-2xl border border-blue-100 shadow-3xs flex flex-col items-center lg:items-start text-center lg:text-left gap-2">
+                                <div class="w-10 h-10 bg-sky-50 text-sky-700 rounded-xl flex items-center justify-center"><i data-lucide="search-code" class="w-5 h-5"></i></div>
                                 <h3 class="text-xs font-bold text-slate-800">ค้นหาข้อสอบได้เร็ว</h3>
                                 <p class="text-[11px] text-slate-400">ประหยัดเวลา ค้นหาแบบเรียลไทม์</p>
                             </div>
-                            <div class="bg-white/90 backdrop-blur-xs p-4 rounded-2xl border border-teal-100 shadow-3xs flex flex-col items-center lg:items-start text-center lg:text-left gap-2">
+                            <div class="bg-white/90 backdrop-blur-xs p-4 rounded-2xl border border-blue-100 shadow-3xs flex flex-col items-center lg:items-start text-center lg:text-left gap-2">
                                 <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center"><i data-lucide="shield-check" class="w-5 h-5"></i></div>
                                 <h3 class="text-xs font-bold text-slate-800">มาตรฐานและปลอดภัย</h3>
                                 <p class="text-[11px] text-slate-400">เชื่อถือได้ เอกสารผ่านการคัดกรอง</p>
                             </div>
-                            <div class="bg-white/90 backdrop-blur-xs p-4 rounded-2xl border border-teal-100 shadow-3xs flex flex-col items-center lg:items-start text-center lg:text-left gap-2">
+                            <div class="bg-white/90 backdrop-blur-xs p-4 rounded-2xl border border-blue-100 shadow-3xs flex flex-col items-center lg:items-start text-center lg:text-left gap-2">
                                 <div class="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center"><i data-lucide="bar-chart-3" class="w-5 h-5"></i></div>
                                 <h3 class="text-xs font-bold text-slate-800">รายงานและสถิติ</h3>
                                 <p class="text-[11px] text-slate-400">ใช้งานได้จริง ข้อมูลแจกแจงชัดเจน</p>
@@ -170,11 +170,11 @@
                     </div>
 
                     <div class="lg:col-span-5 w-full max-w-md mx-auto">
-                        <div class="bg-white p-8 rounded-3xl shadow-xl border border-teal-100 flex flex-col gap-6 relative overflow-hidden">
-                            <div class="absolute top-0 inset-x-0 h-1.5 bg-linear-to-r from-teal-500 to-cyan-600"></div>
+                        <div class="bg-white p-8 rounded-3xl shadow-xl border border-blue-100 flex flex-col gap-6 relative overflow-hidden">
+                            <div class="absolute top-0 inset-x-0 h-1.5 bg-linear-to-r from-blue-600 to-blue-800"></div>
                             
                             <div class="flex flex-col items-center text-center gap-2">
-                                <div class="w-14 h-14 border border-teal-500/30 text-teal-600 rounded-full flex items-center justify-center shadow-xs">
+                                <div class="w-14 h-14 border border-blue-600/30 text-blue-700 rounded-full flex items-center justify-center shadow-xs">
                                     <i data-lucide="lock" class="w-6 h-6"></i>
                                 </div>
                                 <h2 class="text-2xl font-bold text-slate-800 mt-2">เข้าสู่ระบบ</h2>
@@ -185,17 +185,17 @@
                                 <div class="flex flex-col gap-1.5 relative">
                                     <div class="relative">
                                         <i data-lucide="user" class="w-4 h-4 text-slate-400 absolute left-4 top-4"></i>
-                                        <input type="text" id="login-username" required class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-teal-600 transition bg-white text-slate-700" placeholder="ชื่อผู้ใช้">
+                                        <input type="text" id="login-username" required class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-blue-700 transition bg-white text-slate-700" placeholder="ชื่อผู้ใช้">
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-1.5 relative">
                                     <div class="relative">
                                         <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-4 top-4"></i>
-                                        <input type="password" id="login-password" required class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-teal-600 transition bg-white text-slate-700" placeholder="รหัสผ่าน">
+                                        <input type="password" id="login-password" required class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 text-sm focus:outline-hidden focus:border-blue-700 transition bg-white text-slate-700" placeholder="รหัสผ่าน">
                                     </div>
                                 </div>
 
-                                <button type="submit" class="w-full py-3.5 bg-teal-600 hover:bg-teal-700 text-white rounded-xl font-bold text-sm shadow-md transition-all mt-4 flex items-center justify-center cursor-pointer">
+                                <button type="submit" class="w-full py-3.5 bg-blue-700 hover:bg-blue-800 text-white rounded-xl font-bold text-sm shadow-md transition-all mt-4 flex items-center justify-center cursor-pointer">
                                     เข้าสู่ระบบ
                                 </button>
                             </form>
@@ -207,7 +207,7 @@
                             </div>
 
                             <p class="text-center text-xs text-slate-500 font-medium">
-                                หากมีปัญหาในการเข้าสู่ระบบ <a href="https://line.me/ti/p/v3sDgprQJw" target="_blank" class="text-teal-600 hover:underline font-semibold">ติดต่อผู้ดูแลระบบ</a>
+                                หากมีปัญหาในการเข้าสู่ระบบ <a href="https://line.me/ti/p/v3sDgprQJw" target="_blank" class="text-blue-700 hover:underline font-semibold">ติดต่อผู้ดูแลระบบ</a>
                             </p>
                         </div>
                     </div>
@@ -218,22 +218,22 @@
             <section id="page-dashboard" class="view-section max-w-7xl w-full mx-auto px-4 md:px-8 py-6 fade-in hidden flex flex-col gap-8">
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-teal-100/70 flex items-center justify-between">
+                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-blue-100/70 flex items-center justify-between">
                         <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 bg-teal-50 rounded-2xl flex items-center justify-center text-teal-600 shadow-3xs">
+                            <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-700 shadow-3xs">
                                 <i data-lucide="file-text" class="w-7 h-7"></i>
                             </div>
                             <div class="flex flex-col">
                                 <p class="text-xs font-medium text-slate-400">จำนวนข้อสอบทั้งหมด</p>
                                 <h3 id="stat-total-exams" class="text-2xl font-bold text-slate-800 mt-0.5">0 <span class="text-xs font-normal text-slate-500 ml-1">ข้อ</span></h3>
-                                <p class="text-[10px] text-teal-600 font-medium mt-1 flex items-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i> เพิ่มขึ้นต่อเนื่อง</p>
+                                <p class="text-[10px] text-blue-700 font-medium mt-1 flex items-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i> เพิ่มขึ้นต่อเนื่อง</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-teal-100/70 flex items-center justify-between">
+                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-blue-100/70 flex items-center justify-between">
                         <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 bg-cyan-50 rounded-2xl flex items-center justify-center text-cyan-600 shadow-3xs">
+                            <div class="w-14 h-14 bg-sky-50 rounded-2xl flex items-center justify-center text-sky-700 shadow-3xs">
                                 <i data-lucide="book-open" class="w-7 h-7"></i>
                             </div>
                             <div class="flex flex-col">
@@ -244,7 +244,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-teal-100/70 flex items-center justify-between">
+                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-blue-100/70 flex items-center justify-between">
                         <div class="flex items-center gap-4">
                             <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 shadow-3xs">
                                 <i data-lucide="graduation-cap" class="w-7 h-7"></i>
@@ -260,20 +260,20 @@
 
                 <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-4">
                     <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-                        <i data-lucide="book-open" class="w-4 h-4 text-teal-600"></i> จำนวนข้อสอบ จำแนกตามกลุ่มสาระการเรียนรู้
+                        <i data-lucide="book-open" class="w-4 h-4 text-blue-700"></i> จำนวนข้อสอบ จำแนกตามกลุ่มสาระการเรียนรู้
                     </h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="dashboard-subject-grid"></div>
                 </div>
 
                 <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-4">
                     <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
-                        <i data-lucide="layers" class="w-4 h-4 text-cyan-600"></i> จำนวนข้อสอบ จำแนกตามระดับชั้น
+                        <i data-lucide="layers" class="w-4 h-4 text-sky-700"></i> จำนวนข้อสอบ จำแนกตามระดับชั้น
                     </h4>
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" id="dashboard-grade-grid"></div>
                 </div>
 
                 <div class="flex flex-col gap-4 mt-2">
-                    <h3 class="text-base font-bold text-slate-800 border-l-4 border-teal-600 pl-3 py-0.5 tracking-wide">
+                    <h3 class="text-base font-bold text-slate-800 border-l-4 border-blue-700 pl-3 py-0.5 tracking-wide">
                         จำนวนข้อสอบ 8 กลุ่มสาระการเรียนรู้ จำแนกตามระดับชั้น
                     </h3>
                     
@@ -283,7 +283,7 @@
                             <div class="relative h-48"><canvas id="chart-thai"></canvas></div>
                         </div>
                         <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3">
-                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-teal-500"></span> กลุ่มสาระการเรียนรู้คณิตศาสตร์</h3>
+                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-600"></span> กลุ่มสาระการเรียนรู้คณิตศาสตร์</h3>
                             <div class="relative h-48"><canvas id="chart-math"></canvas></div>
                         </div>
                         <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3">
@@ -295,7 +295,7 @@
                             <div class="relative h-48"><canvas id="chart-social"></canvas></div>
                         </div>
                         <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3">
-                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-cyan-500"></span> กลุ่มสาระการเรียนรู้สุขศึกษาและพลศึกษา</h3>
+                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-sky-500"></span> กลุ่มสาระการเรียนรู้สุขศึกษาและพลศึกษา</h3>
                             <div class="relative h-48"><canvas id="chart-health"></canvas></div>
                         </div>
                         <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3">
@@ -315,10 +315,10 @@
             </section>
 
             <section id="page-archive" class="view-section max-w-7xl w-full mx-auto px-4 md:px-8 py-6 fade-in hidden flex flex-col gap-6">
-                <div class="bg-white p-4 md:p-5 rounded-2xl shadow-xs border border-teal-100/60 flex flex-col gap-4">
+                <div class="bg-white p-4 md:p-5 rounded-2xl shadow-xs border border-blue-100/60 flex flex-col gap-4">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div>
-                            <select id="archive-filter-group" onchange="renderArchiveTables()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition bg-white font-medium text-slate-700">
+                            <select id="archive-filter-group" onchange="renderArchiveTables()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition bg-white font-medium text-slate-700">
                                 <option value="">ทุกกลุ่มสาระการเรียนรู้</option>
                                 <option value="ภาษาไทย">ภาษาไทย</option>
                                 <option value="คณิตศาสตร์">คณิตศาสตร์</option>
@@ -331,7 +331,7 @@
                             </select>
                         </div>
                         <div>
-                            <select id="archive-filter-grade" onchange="renderArchiveTables()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition bg-white font-medium text-slate-700">
+                            <select id="archive-filter-grade" onchange="renderArchiveTables()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition bg-white font-medium text-slate-700">
                                 <option value="">ทุกระดับชั้น</option>
                                 <option value="ประถมศึกษาปีที่ 1">ประถมศึกษาปีที่ 1</option>
                                 <option value="ประถมศึกษาปีที่ 2">ประถมศึกษาปีที่ 2</option>
@@ -346,7 +346,7 @@
                         </div>
                         <div class="relative">
                             <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3.5"></i>
-                            <input type="text" id="archive-filter-search" oninput="renderArchiveTables()" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition" placeholder="ค้นหารหัสวิชา, ชื่อวิชา, เรื่อง...">
+                            <input type="text" id="archive-filter-search" oninput="renderArchiveTables()" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition" placeholder="ค้นหารหัสวิชา, ชื่อวิชา, เรื่อง...">
                         </div>
                     </div>
                 </div>
@@ -355,14 +355,14 @@
             </section>
 
             <section id="page-exams" class="view-section max-w-7xl w-full mx-auto px-4 md:px-8 py-6 fade-in hidden flex flex-col gap-6">
-                <div class="bg-white p-4 md:p-6 rounded-2xl shadow-xs border border-teal-100/60 flex flex-col gap-4">
+                <div class="bg-white p-4 md:p-6 rounded-2xl shadow-xs border border-blue-100/60 flex flex-col gap-4">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div class="relative">
                             <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3.5"></i>
-                            <input type="text" id="filter-search" oninput="renderExamTable()" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition" placeholder="ค้นหารหัสวิชา, ชื่อวิชา, เรื่อง...">
+                            <input type="text" id="filter-search" oninput="renderExamTable()" class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition" placeholder="ค้นหารหัสวิชา, ชื่อวิชา, เรื่อง...">
                         </div>
                         <div>
-                            <select id="filter-group" onchange="renderExamTable()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition bg-white">
+                            <select id="filter-group" onchange="renderExamTable()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition bg-white">
                                 <option value="">ทุกกลุ่มสาระการเรียนรู้</option>
                                 <option value="ภาษาไทย">ภาษาไทย</option>
                                 <option value="คณิตศาสตร์">คณิตศาสตร์</option>
@@ -375,7 +375,7 @@
                             </select>
                         </div>
                         <div>
-                            <select id="filter-grade" onchange="renderExamTable()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition bg-white">
+                            <select id="filter-grade" onchange="renderExamTable()" class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition bg-white">
                                 <option value="">ทุกระดับชั้น</option>
                                 <option value="ประถมศึกษาปีที่ 1">ประถมศึกษาปีที่ 1</option>
                                 <option value="ประถมศึกษาปีที่ 2">ประถมศึกษาปีที่ 2</option>
@@ -398,7 +398,7 @@
                             <button onclick="exportExamsToCSV()" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition cursor-pointer">
                                 <i data-lucide="download" class="w-3.5 h-3.5"></i> ส่งออกข้อมูล (CSV)
                             </button>
-                            <button id="btn-add-exam-trigger" onclick="openExamForm()" class="flex items-center gap-1.5 px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold rounded-xl transition shadow-xs hidden cursor-pointer">
+                            <button id="btn-add-exam-trigger" onclick="openExamForm()" class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold rounded-xl transition shadow-xs hidden cursor-pointer">
                                 <i data-lucide="plus" class="w-3.5 h-3.5"></i> เพิ่มข้อสอบและเฉลย
                             </button>
                         </div>
@@ -428,11 +428,11 @@
                     <div class="flex flex-col gap-4">
                         <div class="flex flex-col gap-1.5">
                             <label class="text-xs font-semibold text-slate-500">ปีการศึกษา (พ.ศ.) <span class="text-red-500">*</span></label>
-                            <input type="number" id="fx-year" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition" value="2569" placeholder="เช่น 2569">
+                            <input type="number" id="fx-year" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition" value="2569" placeholder="เช่น 2569">
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <label class="text-xs font-semibold text-slate-500">กลุ่มสาระการเรียนรู้ <span class="text-red-500">*</span></label>
-                            <select id="fx-group" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition">
+                            <select id="fx-group" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition">
                                 <option value="ภาษาไทย">ภาษาไทย</option>
                                 <option value="คณิตศาสตร์">คณิตศาสตร์</option>
                                 <option value="วิทยาศาสตร์และเทคโนโลยี">วิทยาศาสตร์และเทคโนโลยี</option>
@@ -445,15 +445,15 @@
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <label class="text-xs font-semibold text-slate-500">รหัสวิชา <span class="text-red-500">*</span></label>
-                            <input type="text" id="fx-code" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition" placeholder="เช่น ค11101">
+                            <input type="text" id="fx-code" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition" placeholder="เช่น ค11101">
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <label class="text-xs font-semibold text-slate-500">ชื่อรายวิชา <span class="text-red-500">*</span></label>
-                            <input type="text" id="fx-name" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition" placeholder="เช่น คณิตศาสตร์พื้นฐาน">
+                            <input type="text" id="fx-name" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition" placeholder="เช่น คณิตศาสตร์พื้นฐาน">
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <label class="text-xs font-semibold text-slate-500">ระดับชั้น <span class="text-red-500">*</span></label>
-                            <select id="fx-grade" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition">
+                            <select id="fx-grade" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition">
                                 <option value="ประถมศึกษาปีที่ 1">ประถมศึกษาปีที่ 1</option>
                                 <option value="ประถมศึกษาปีที่ 2">ประถมศึกษาปีที่ 2</option>
                                 <option value="ประถมศึกษาปีที่ 3">ประถมศึกษาปีที่ 3</option>
@@ -467,11 +467,11 @@
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <label class="text-xs font-semibold text-slate-500">มาตรฐานการเรียนรู้ <span class="text-red-500">*</span></label>
-                            <input type="text" id="fx-standard" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition" placeholder="เช่น ค 1.1">
+                            <input type="text" id="fx-standard" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition" placeholder="เช่น ค 1.1">
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <label class="text-xs font-semibold text-slate-500">ตัวชี้วัดปลายทาง <span class="text-red-500">*</span></label>
-                            <input type="text" id="fx-indicator" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition" placeholder="เช่น ป.1/2">
+                            <input type="text" id="fx-indicator" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition" placeholder="เช่น ป.1/2">
                         </div>
                     </div>
 
@@ -479,35 +479,35 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div class="flex flex-col gap-1.5">
                                 <label class="text-xs font-semibold text-slate-500">ชื่อหน่วยการเรียนรู้ <span class="text-red-500">*</span></label>
-                                <input type="text" id="fx-unit" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition" placeholder="เช่น จำนวนนับ 1 ถึง 10">
+                                <input type="text" id="fx-unit" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition" placeholder="เช่น จำนวนนับ 1 ถึง 10">
                             </div>
                             <div class="flex flex-col gap-1.5">
                                 <label class="text-xs font-semibold text-slate-500">เรื่อง <span class="text-red-500">*</span></label>
-                                <input type="text" id="fx-topic" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition" placeholder="เช่น การบวกเลข">
+                                <input type="text" id="fx-topic" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition" placeholder="เช่น การบวกเลข">
                             </div>
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <label class="text-xs font-semibold text-slate-500">สาระสำคัญ <span class="text-red-500">*</span></label>
-                            <textarea id="fx-essential" required rows="2" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition" placeholder="สรุปเนื้อหาสำคัญสั้นๆ..."></textarea>
+                            <textarea id="fx-essential" required rows="2" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition" placeholder="สรุปเนื้อหาสำคัญสั้นๆ..."></textarea>
                         </div>
                         <div class="flex flex-col gap-1.5">
-                            <label class="text-xs font-semibold text-teal-600">จุดประสงค์ด้านความรู้ความเข้าใจ (K) <span class="text-red-500">*</span></label>
-                            <input type="text" id="fx-obj-k" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition" placeholder="ระบุสิ่งที่ผู้เรียนจะรู้...">
+                            <label class="text-xs font-semibold text-blue-700">จุดประสงค์ด้านความรู้ความเข้าใจ (K) <span class="text-red-500">*</span></label>
+                            <input type="text" id="fx-obj-k" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition" placeholder="ระบุสิ่งที่ผู้เรียนจะรู้...">
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <label class="text-xs font-semibold text-emerald-600">จุดประสงค์ด้านทักษะกระบวนการ (P) <span class="text-red-500">*</span></label>
-                            <input type="text" id="fx-obj-p" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition" placeholder="ระบุสิ่งที่ผู้เรียนทำได้...">
+                            <input type="text" id="fx-obj-p" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition" placeholder="ระบุสิ่งที่ผู้เรียนทำได้...">
                         </div>
                         <div class="flex flex-col gap-1.5">
                             <label class="text-xs font-semibold text-amber-600">จุดประสงค์ด้านคุณลักษณะ/เจตคติ (A) <span class="text-red-500">*</span></label>
-                            <input type="text" id="fx-obj-a" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-teal-600 transition" placeholder="ระบุพฤติกรรมพึงประสงค์...">
+                            <input type="text" id="fx-obj-a" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-hidden focus:border-blue-700 transition" placeholder="ระบุพฤติกรรมพึงประสงค์...">
                         </div>
                         
                         <div class="border border-dashed border-slate-200 p-4 rounded-2xl bg-slate-50/50 flex flex-col gap-4 mt-2">
                             <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">แนบไฟล์ข้อสอบ พร้อมเฉลย (PDF)</span>
                             <div class="flex flex-col gap-1">
                                 <label class="text-xs font-semibold text-slate-600">1. ไฟล์ข้อสอบ <span class="text-red-500">*</span></label>
-                                <input type="file" id="fx-file-exam" accept="application/pdf" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-teal-50 file:text-teal-700 hover:file:bg-teal-100">
+                                <input type="file" id="fx-file-exam" accept="application/pdf" class="text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-800 hover:file:bg-blue-100">
                                 <p id="fx-current-exam-url" class="text-[10px] text-slate-400 truncate"></p>
                             </div>
                             <div class="flex flex-col gap-1">
@@ -520,20 +520,20 @@
 
                     <div class="md:col-span-2 flex justify-end gap-3 pt-4 border-t border-slate-100">
                         <button type="button" onclick="switchPage('exams')" class="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-600 hover:bg-slate-50 transition cursor-pointer">ยกเลิก</button>
-                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-teal-600 text-white font-bold text-xs hover:bg-teal-700 transition shadow-xs cursor-pointer">บันทึกข้อมูล</button>
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-700 text-white font-bold text-xs hover:bg-blue-800 transition shadow-xs cursor-pointer">บันทึกข้อมูล</button>
                     </div>
                 </form>
             </section>
 
             <section id="page-users" class="view-section max-w-7xl w-full mx-auto px-4 md:px-8 py-6 fade-in hidden flex flex-col gap-6">
-                <div id="teacher-password-box" class="bg-teal-50 border border-teal-200 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div id="teacher-password-box" class="bg-blue-50 border border-blue-200 p-5 rounded-2xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
-                        <h4 class="text-sm font-bold text-teal-900 flex items-center gap-1.5"><i data-lucide="shield-check" class="w-4 h-4 text-teal-600"></i> ความปลอดภัยของบัญชี</h4>
-                        <p class="text-xs text-teal-700 mt-0.5">คุณสามารถตั้งรหัสผ่านใหม่เพื่อความปลอดภัยในการเข้าใช้งานระบบ</p>
+                        <h4 class="text-sm font-bold text-blue-900 flex items-center gap-1.5"><i data-lucide="shield-check" class="w-4 h-4 text-blue-700"></i> ความปลอดภัยของบัญชี</h4>
+                        <p class="text-xs text-blue-800 mt-0.5">คุณสามารถตั้งรหัสผ่านใหม่เพื่อความปลอดภัยในการเข้าใช้งานระบบ</p>
                     </div>
                     <div class="flex gap-2 w-full md:w-auto">
                         <input type="password" id="self-new-password" placeholder="รหัสผ่านใหม่ที่นี่..." class="bg-white px-3 py-1.5 rounded-xl border border-slate-200 text-xs focus:outline-hidden w-full md:w-48">
-                        <button onclick="changeSelfPassword()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold px-4 py-1.5 rounded-xl text-xs whitespace-nowrap transition shadow-xs cursor-pointer">เปลี่ยนรหัสผ่าน</button>
+                        <button onclick="changeSelfPassword()" class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-4 py-1.5 rounded-xl text-xs whitespace-nowrap transition shadow-xs cursor-pointer">เปลี่ยนรหัสผ่าน</button>
                     </div>
                 </div>
 
@@ -543,7 +543,7 @@
                             <h3 class="text-base font-bold text-slate-800">จัดการข้อมูลผู้ใช้งานระบบทั้งหมด</h3>
                             <p class="text-xs text-slate-400 mt-0.5">สิทธิ์เฉพาะผู้ดูแลระบบ (Admin) ในการ เพิ่ม/ลบ/แก้ไขข้อมูลครูผู้สอน</p>
                         </div>
-                        <button onclick="openUserModal()" class="flex items-center gap-1 px-3 py-1.5 bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold rounded-xl transition shadow-xs cursor-pointer">
+                        <button onclick="openUserModal()" class="flex items-center gap-1 px-3 py-1.5 bg-blue-700 hover:bg-blue-800 text-white text-xs font-bold rounded-xl transition shadow-xs cursor-pointer">
                             <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> เพิ่มผู้ใช้งาน
                         </button>
                     </div>
@@ -566,7 +566,7 @@
         </div>
     </main>
 
-    <footer class="bg-white border-t border-teal-100 py-4 mt-auto text-center px-4">
+    <footer class="bg-white border-t border-blue-100 py-4 mt-auto text-center px-4">
         <p class="text-xs md:text-sm text-slate-500 font-medium tracking-wide">
             &copy; 2026 โรงเรียนทนาพรวิทยา. ระบบคลังข้อสอบออนไลน์ พัฒนาโดย นายเจษฎากร เชิดฉาย
         </p>
@@ -634,12 +634,12 @@
 
         // ปรับแต่ง Brand ชุดสีโทนฟ้าน้ำทะเล/ฟ้าพาสเทล ให้กลมกลืนตามภาพรวมระบบ
         const subjectBrandingMap = {
-            "ภาษาไทย": { bg: "bg-teal-50", text: "text-teal-600", border: "border-teal-200", indicator: "bg-pink-400", label: "ก" },
-            "คณิตศาสตร์": { bg: "bg-teal-50", text: "text-teal-700", border: "border-teal-200", indicator: "bg-teal-500", label: "+-×÷" },
-            "วิทยาศาสตร์และเทคโนโลยี": { bg: "bg-cyan-50", text: "text-cyan-600", border: "border-cyan-200", indicator: "bg-emerald-500", icon: "beaker" },
+            "ภาษาไทย": { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200", indicator: "bg-pink-400", label: "ก" },
+            "คณิตศาสตร์": { bg: "bg-blue-50", text: "text-blue-800", border: "border-blue-200", indicator: "bg-blue-600", label: "+-×÷" },
+            "วิทยาศาสตร์และเทคโนโลยี": { bg: "bg-sky-50", text: "text-sky-700", border: "border-sky-200", indicator: "bg-emerald-500", icon: "beaker" },
             "สังคมศึกษา ศาสนา และวัฒนธรรม": { bg: "bg-sky-50", text: "text-sky-700", border: "border-sky-200", indicator: "bg-amber-500", icon: "landmark" },
-            "สุขศึกษาและพลศึกษา": { bg: "bg-teal-50", text: "text-cyan-700", border: "border-teal-200", indicator: "bg-cyan-500", icon: "heart-pulse" },
-            "ศิลปะ": { bg: "bg-cyan-50", text: "text-teal-600", border: "border-cyan-200", indicator: "bg-purple-400", icon: "palette" },
+            "สุขศึกษาและพลศึกษา": { bg: "bg-blue-50", text: "text-sky-800", border: "border-blue-200", indicator: "bg-sky-500", icon: "heart-pulse" },
+            "ศิลปะ": { bg: "bg-sky-50", text: "text-blue-700", border: "border-sky-200", indicator: "bg-purple-400", icon: "palette" },
             "การงานอาชีพ": { bg: "bg-slate-50", text: "text-slate-700", border: "border-slate-200", indicator: "bg-yellow-600", icon: "briefcase" },
             "ภาษาต่างประเทศ": { bg: "bg-sky-50", text: "text-sky-600", border: "border-sky-200", indicator: "bg-sky-500", label: "EN" }
         };
@@ -659,7 +659,7 @@
         function triggerToast(message, variant = 'success') {
             const container = document.getElementById('toast-box');
             const toast = document.createElement('div');
-            const bgClass = variant === 'success' ? 'bg-teal-600' : (variant === 'danger' ? 'bg-red-600' : 'bg-amber-500');
+            const bgClass = variant === 'success' ? 'bg-blue-700' : (variant === 'danger' ? 'bg-red-600' : 'bg-amber-500');
             toast.className = `${bgClass} text-white px-4 py-3 rounded-xl shadow-lg font-medium text-xs flex items-center gap-2 fade-in max-w-xs`;
             toast.innerHTML = `<i data-lucide="info" class="w-4 h-4"></i> <span>${message}</span>`;
             container.appendChild(toast);
@@ -734,7 +734,7 @@
             if (isGuest) {
                 btnAuth.innerHTML = `<i data-lucide="home" class="w-3.5 h-3.5"></i> หน้าแรก`;
                 btnAuth.setAttribute('onclick', "switchPage('landing')");
-                btnAuth.className = "flex items-center gap-2 px-4 py-1.5 text-xs font-bold text-white bg-teal-600 hover:bg-teal-700 rounded-xl transition shadow-xs cursor-pointer";
+                btnAuth.className = "flex items-center gap-2 px-4 py-1.5 text-xs font-bold text-white bg-blue-700 hover:bg-blue-800 rounded-xl transition shadow-xs cursor-pointer";
                 userCard.classList.add('hidden');
                 userCard.classList.remove('flex');
             } else {
@@ -769,13 +769,13 @@
             }
 
             desktopMenu.innerHTML = links.map(lnk => `
-                <button onclick="switchPage('${lnk.id}')" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition cursor-pointer ${activePage === lnk.id ? 'bg-white text-teal-600 shadow-xs' : 'text-slate-600 hover:bg-white/50'}">
+                <button onclick="switchPage('${lnk.id}')" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition cursor-pointer ${activePage === lnk.id ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600 hover:bg-white/50'}">
                     <i data-lucide="${lnk.icon}" class="w-3.5 h-3.5"></i> ${lnk.label}
                 </button>
             `).join('');
 
             bottomNav.innerHTML = links.map(lnk => `
-                <button onclick="switchPage('${lnk.id}')" class="flex flex-col items-center justify-center text-slate-500 flex-1 ${activePage === lnk.id ? 'text-teal-600' : ''}">
+                <button onclick="switchPage('${lnk.id}')" class="flex flex-col items-center justify-center text-slate-500 flex-1 ${activePage === lnk.id ? 'text-blue-700' : ''}">
                     <i data-lucide="${lnk.icon}" class="w-4 h-4"></i>
                     <span class="text-[9px] font-medium mt-0.5">${lnk.label}</span>
                 </button>
@@ -826,7 +826,7 @@
                                 <td class="p-4 text-xs text-slate-500 font-medium">${operatorDisplayName}</td>
                                 <td class="p-4">
                                     <div class="flex flex-wrap gap-2">
-                                        <a href="${item.exam_file_url}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-teal-50 hover:bg-teal-100 text-teal-700 rounded-lg transition">
+                                        <a href="${item.exam_file_url}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-lg transition">
                                             <i data-lucide="file" class="w-3 h-3"></i> ข้อสอบ
                                         </a>
                                         <a href="${item.answer_file_url}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg transition">
@@ -1007,11 +1007,11 @@
                     <tr class="hover:bg-slate-50 transition">
                         <td class="p-4 font-bold text-slate-700">${u.username}</td>
                         <td class="p-4 text-slate-600">${u.full_name}</td>
-                        <td class="p-4"><span class="px-2.5 py-1 text-xs font-bold rounded-full ${u.role === 'Admin' ? 'bg-teal-50 text-teal-700':'bg-slate-100 text-slate-700'}">${u.role}</span></td>
+                        <td class="p-4"><span class="px-2.5 py-1 text-xs font-bold rounded-full ${u.role === 'Admin' ? 'bg-blue-50 text-blue-800':'bg-slate-100 text-slate-700'}">${u.role}</span></td>
                         <td class="p-4 text-xs text-slate-400">${new Date(u.created_at).toLocaleDateString('th-TH')}</td>
                         <td class="p-4 text-right">
                             <div class="flex gap-1 justify-end">
-                                <button onclick="openUserModal(${u.id})" class="p-1.5 hover:bg-slate-100 rounded-lg text-teal-600 transition"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                                <button onclick="openUserModal(${u.id})" class="p-1.5 hover:bg-slate-100 rounded-lg text-blue-700 transition"><i data-lucide="edit" class="w-4 h-4"></i></button>
                                 <button onclick="deleteUserDocument(${u.id})" class="p-1.5 hover:bg-red-50 rounded-lg text-red-600 transition"><i data-lucide="user-x" class="w-4 h-4"></i></button>
                             </div>
                         </td>
@@ -1061,7 +1061,7 @@
                 return `
                     <tr class="hover:bg-slate-50/80 transition">
                         <td class="p-4">
-                            <span class="text-xs font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded-md">ปี ${displayYear}</span>
+                            <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md">ปี ${displayYear}</span>
                             <div class="font-bold text-slate-700 mt-1">${item.subject_code}</div>
                         </td>
                         <td class="p-4">
@@ -1072,7 +1072,7 @@
                         <td class="p-4 text-xs max-w-xs font-medium text-slate-700">${item.topic_name}</td>
                         <td class="p-4">
                             <div class="flex gap-2">
-                                <a href="${item.exam_file_url}" target="_blank" class="flex items-center gap-1 text-[11px] font-bold text-teal-600 hover:underline">
+                                <a href="${item.exam_file_url}" target="_blank" class="flex items-center gap-1 text-[11px] font-bold text-blue-700 hover:underline">
                                     <i data-lucide="file" class="w-3.5 h-3.5"></i> ข้อสอบ
                                 </a>
                                 <a href="${item.answer_file_url}" target="_blank" class="flex items-center gap-1 text-[11px] font-bold text-emerald-600 hover:underline">
@@ -1217,7 +1217,7 @@
                                 </div>
                                 <div class="flex flex-col">
                                     <span class="text-xs font-semibold text-slate-500">${group}</span>
-                                    <span class="text-teal-600 text-base font-bold mt-0.5">${count.toLocaleString()} <span class="text-[11px] font-normal text-slate-400 ml-0.5">ข้อ</span></span>
+                                    <span class="text-blue-700 text-base font-bold mt-0.5">${count.toLocaleString()} <span class="text-[11px] font-normal text-slate-400 ml-0.5">ข้อ</span></span>
                                 </div>
                             </div>
                         </div>
@@ -1228,12 +1228,12 @@
             const gradeGrid = document.getElementById('dashboard-grade-grid');
             if (gradeGrid) {
                 let gradeHtml = `
-                    <div class="bg-teal-50/40 p-3 rounded-xl border border-teal-500/30 flex flex-col justify-between h-20 shadow-3xs">
+                    <div class="bg-blue-50/40 p-3 rounded-xl border border-blue-600/30 flex flex-col justify-between h-20 shadow-3xs">
                         <div class="flex justify-between items-start">
                             <span class="text-[11px] font-bold text-slate-500 leading-none">ทุกระดับชั้น</span>
-                            <span class="text-xs font-bold text-teal-300 uppercase tracking-wider leading-none">ALL</span>
+                            <span class="text-xs font-bold text-blue-300 uppercase tracking-wider leading-none">ALL</span>
                         </div>
-                        <p class="text-teal-600 text-base font-bold">${totalCount.toLocaleString()} <span class="text-[10px] font-normal text-slate-400">ข้อ</span></p>
+                        <p class="text-blue-700 text-base font-bold">${totalCount.toLocaleString()} <span class="text-[10px] font-normal text-slate-400">ข้อ</span></p>
                     </div>
                 `;
 
@@ -1243,12 +1243,12 @@
                     const engShort = grade.includes('ประถม') ? `P.${shortName.replace('ป.', '')}` : `M.${shortName.replace('ม.', '')}`;
                     
                     return `
-                        <div class="bg-white p-3 rounded-xl border border-slate-200/80 flex flex-col justify-between h-20 transition hover:border-teal-200">
+                        <div class="bg-white p-3 rounded-xl border border-slate-200/80 flex flex-col justify-between h-20 transition hover:border-blue-200">
                             <div class="flex justify-between items-start">
                                 <span class="text-[11px] font-semibold text-slate-500 leading-none">${shortName}</span>
                                 <span class="text-[11px] font-bold text-slate-200 uppercase tracking-wider leading-none">${engShort}</span>
                             </div>
-                            <p class="text-teal-600 text-base font-bold">${count.toLocaleString()} <span class="text-[10px] font-normal text-slate-400">ข้อ</span></p>
+                            <p class="text-blue-700 text-base font-bold">${count.toLocaleString()} <span class="text-[10px] font-normal text-slate-400">ข้อ</span></p>
                         </div>
                     `;
                 }).join('');
