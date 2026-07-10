@@ -762,24 +762,45 @@
                 links.push({ id: 'dashboard', label: 'แดชบอร์ด', icon: 'pie-chart' });
                 links.push({ id: 'archive', label: 'คลังข้อสอบ', icon: 'archive' });
                 links.push({ id: 'exams', label: 'จัดการข้อสอบ', icon: 'file-text' });
+                // เพิ่มลิงก์เมนู "สรุปตัวชี้วัด" แบบระบุ URL ภายนอก คั่นระหว่าง จัดการข้อสอบ และ ตั้งค่าผู้ใช้
+                links.push({ id: 'indicators', label: 'สรุปตัวชี้วัด', icon: 'file-bar-chart', externalUrl: 'https://drive.google.com/drive/u/0/folders/1mk-33lkqVngRF1yXrR39fhXH6rrVxADg' });
                 links.push({ id: 'users', label: 'ตั้งค่าผู้ใช้', icon: 'users' });
             } else {
                 links.push({ id: 'landing', label: 'หน้าแรก', icon: 'home' });
                 links.push({ id: 'archive', label: 'คลังข้อสอบสาธารณะ', icon: 'archive' });
             }
 
-            desktopMenu.innerHTML = links.map(lnk => `
-                <button onclick="switchPage('${lnk.id}')" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition cursor-pointer ${activePage === lnk.id ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600 hover:bg-white/50'}">
-                    <i data-lucide="${lnk.icon}" class="w-3.5 h-3.5"></i> ${lnk.label}
-                </button>
-            `).join('');
+            desktopMenu.innerHTML = links.map(lnk => {
+                if (lnk.externalUrl) {
+                    return `
+                        <a href="${lnk.externalUrl}" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-slate-600 hover:bg-white/50 transition cursor-pointer">
+                            <i data-lucide="${lnk.icon}" class="w-3.5 h-3.5"></i> ${lnk.label}
+                        </a>
+                    `;
+                }
+                return `
+                    <button onclick="switchPage('${lnk.id}')" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg transition cursor-pointer ${activePage === lnk.id ? 'bg-white text-blue-700 shadow-xs' : 'text-slate-600 hover:bg-white/50'}">
+                        <i data-lucide="${lnk.icon}" class="w-3.5 h-3.5"></i> ${lnk.label}
+                    </button>
+                `;
+            }).join('');
 
-            bottomNav.innerHTML = links.map(lnk => `
-                <button onclick="switchPage('${lnk.id}')" class="flex flex-col items-center justify-center text-slate-500 flex-1 ${activePage === lnk.id ? 'text-blue-700' : ''}">
-                    <i data-lucide="${lnk.icon}" class="w-4 h-4"></i>
-                    <span class="text-[9px] font-medium mt-0.5">${lnk.label}</span>
-                </button>
-            `).join('');
+            bottomNav.innerHTML = links.map(lnk => {
+                if (lnk.externalUrl) {
+                    return `
+                        <a href="${lnk.externalUrl}" target="_blank" class="flex flex-col items-center justify-center text-slate-500 flex-1">
+                            <i data-lucide="${lnk.icon}" class="w-4 h-4"></i>
+                            <span class="text-[9px] font-medium mt-0.5">${lnk.label}</span>
+                        </a>
+                    `;
+                }
+                return `
+                    <button onclick="switchPage('${lnk.id}')" class="flex flex-col items-center justify-center text-slate-500 flex-1 ${activePage === lnk.id ? 'text-blue-700' : ''}">
+                        <i data-lucide="${lnk.icon}" class="w-4 h-4"></i>
+                        <span class="text-[9px] font-medium mt-0.5">${lnk.label}</span>
+                    </button>
+                `;
+            }).join('');
         }
 
         function renderArchiveTables() {
