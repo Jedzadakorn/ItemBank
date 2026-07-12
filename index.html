@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght=200;300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         body {
             font-family: 'Kanit', sans-serif;
@@ -37,6 +39,8 @@
     </div>
 
     <div id="toast-box" class="fixed top-20 right-5 z-[999] flex flex-col gap-2"></div>
+
+    <div id="pdf-cover-render" style="position:fixed; left:-99999px; top:0; z-index:-1;"></div>
 
     <div id="logout-modal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-[900] flex items-center justify-center hidden p-4">
         <div class="bg-white p-6 rounded-2xl shadow-xl max-w-sm w-full slide-up">
@@ -354,6 +358,10 @@
                 <div id="archive-tables-container" class="flex flex-col gap-10"></div>
             </section>
 
+            <section id="page-indicators" class="view-section max-w-5xl w-full mx-auto px-4 md:px-8 py-6 fade-in hidden flex flex-col gap-6">
+                <div id="indicators-container" class="flex flex-col gap-4"></div>
+            </section>
+
             <section id="page-exams" class="view-section max-w-7xl w-full mx-auto px-4 md:px-8 py-6 fade-in hidden flex flex-col gap-6">
                 <div class="bg-white p-4 md:p-6 rounded-2xl shadow-xs border border-blue-100/60 flex flex-col gap-4">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -624,6 +632,17 @@
         let loadedExams = [];
         let loadedUsers = [];
         let activePage = 'landing';
+
+        const indicatorGroups = [
+            { name: 'กลุ่มสาระการเรียนรู้ภาษาไทย', word: 'https://docs.google.com/document/d/1uCcao79_ObllUHoK3BNX5pRxN-NjoORT/edit', pdf: 'https://drive.google.com/file/d/1rcCJUcDMi0hUfuQRdrFz1Af5SIECrXKO/view' },
+            { name: 'กลุ่มสาระการเรียนรู้คณิตศาสตร์', word: 'https://docs.google.com/document/d/1Zoz-IjKQ7YYV2BSQXKhgRft3XqqIhXZT/edit', pdf: 'https://drive.google.com/file/d/1VZXOsUaYUM2s6ztlHGbSm66RcYbXljFx/view' },
+            { name: 'กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี', word: 'https://docs.google.com/document/d/1F3B1EkGwkSzBSeZApkAsWEda8hJzGRjE/edit?usp=sharing&ouid=116261946936964290575&rtpof=true&sd=true', pdf: 'https://drive.google.com/file/d/1RErK7VZ8EbHZlm5t4TnVE97w0nXGof96/view' },
+            { name: 'กลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนา และวัฒนธรรม', word: 'https://docs.google.com/document/d/1jkTGqvSWrr6qAhDEmc9wwBZh2v5zKQun/edit', pdf: 'https://drive.google.com/file/d/1Ln4nArthRbfN6B3_o-Wu9tv9hVbdJjqC/view' },
+            { name: 'กลุ่มสาระการเรียนรู้สุขศึกษาและพลศึกษา', word: 'https://docs.google.com/document/d/1fZmRvcZFinH3SAh3INkjecdeiG2JjJoB/edit', pdf: 'https://drive.google.com/file/d/153w1fdw0NndqCgJ-0Sbe04xGFTFp2EoY/view' },
+            { name: 'กลุ่มสาระการเรียนรู้ศิลปะ', word: 'https://docs.google.com/document/d/1Jm5CawlW81thieBGMvcZTKxZmdYHDKu9/edit', pdf: 'https://drive.google.com/file/d/1l38U5PF3ItMkHE5qyB951v0iw1Fssnny/view' },
+            { name: 'กลุ่มสาระการเรียนรู้การงานอาชีพ', word: 'https://docs.google.com/document/d/17w1a079XzA6z9Bkvjws3yANEGvkTv3gk/edit', pdf: 'https://drive.google.com/file/d/1hVnJ-MD96HmaWXaM5Jqhfx_kCIlXTPLF/view' },
+            { name: 'กลุ่มสาระการเรียนรู้ภาษาต่างประเทศ', word: 'https://docs.google.com/document/d/1XeBS-mQ6SOmsf0nhDR1-aySI5x_hG7db/edit', pdf: 'https://drive.google.com/file/d/1DwutVgJALNcoZ18Waty8Svh6_CRMviR7/view' }
+        ];
         let chartsInstance = {}; 
 
         const subjectGroupsList = [
@@ -675,6 +694,126 @@
             document.getElementById(id).classList.toggle('hidden', !show);
         }
 
+        function escapeHtmlForPdf(str) {
+            return String(str == null ? '' : str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        function coverInfoRow(label, value) {
+            const displayValue = (value === undefined || value === null || value === '') ? '-' : escapeHtmlForPdf(value);
+            return `
+                <div style="display:flex; padding:10px 0; border-bottom:1px solid #e2e8f0; font-size:14px; line-height:1.6;">
+                    <div style="width:250px; flex-shrink:0; font-weight:600; color:#1d4ed8;">${label}</div>
+                    <div style="flex:1; color:#334155; white-space:pre-wrap; word-break:break-word;">${displayValue}</div>
+                </div>
+            `;
+        }
+
+        async function buildExamCoverImageDataUrl(item) {
+            const holder = document.getElementById('pdf-cover-render');
+
+            let displayYear = parseInt(item.academic_year);
+            if (displayYear && displayYear < 2400) displayYear += 543;
+
+            const operatorUser = loadedUsers.find(u => u.username === item.uploaded_by);
+            const operatorDisplayName = operatorUser ? operatorUser.full_name : (item.uploaded_by || '-');
+            const printedDate = new Date().toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            holder.innerHTML = `
+                <div id="pdf-cover-page" style="width:794px; min-height:1123px; background:#ffffff; padding:64px 68px; box-sizing:border-box; font-family:'Kanit', sans-serif; color:#1e293b;">
+                    <h1 style="text-align:center; font-weight:700; font-size:23px; margin:0 0 6px 0; letter-spacing:0.2px;">ระบบคลังข้อสอบออนไลน์ โรงเรียนทนาพรวิทยา</h1>
+                    <p style="text-align:center; font-size:13px; color:#64748b; margin:0 0 26px 0; font-weight:400;">เอกสารข้อมูลประกอบข้อสอบ</p>
+                    <div style="border-top:3px solid #1d4ed8; margin-bottom:22px;"></div>
+                    ${coverInfoRow('ปีการศึกษา (พ.ศ.)', displayYear)}
+                    ${coverInfoRow('กลุ่มสาระการเรียนรู้', item.subject_group)}
+                    ${coverInfoRow('รหัสวิชา', item.subject_code)}
+                    ${coverInfoRow('ชื่อรายวิชา', item.subject_name)}
+                    ${coverInfoRow('ระดับชั้น', item.grade_level)}
+                    ${coverInfoRow('มาตรฐานการเรียนรู้', item.learning_standard)}
+                    ${coverInfoRow('ตัวชี้วัดปลายทาง', item.indicator)}
+                    ${coverInfoRow('ชื่อหน่วยการเรียนรู้', item.unit_name)}
+                    ${coverInfoRow('เรื่อง', item.topic_name)}
+                    ${coverInfoRow('สาระสำคัญ', item.essential_concept)}
+                    ${coverInfoRow('จุดประสงค์ด้านความรู้ความเข้าใจ (K)', item.objective_k)}
+                    ${coverInfoRow('จุดประสงค์ด้านทักษะกระบวนการ (P)', item.objective_p)}
+                    ${coverInfoRow('จุดประสงค์ด้านคุณลักษณะ/เจตคติ (A)', item.objective_a)}
+                    <div style="margin-top:40px; text-align:right; font-size:11px; color:#94a3b8;">
+                        จัดทำโดย ${escapeHtmlForPdf(operatorDisplayName)} | พิมพ์เมื่อ ${printedDate}
+                    </div>
+                </div>
+            `;
+
+            if (document.fonts && document.fonts.ready) {
+                try { await document.fonts.load('700 23px Kanit'); await document.fonts.load('400 14px Kanit'); await document.fonts.ready; } catch (e) {}
+            }
+
+            const targetEl = document.getElementById('pdf-cover-page');
+            const canvas = await html2canvas(targetEl, { scale: 2, backgroundColor: '#ffffff', useCORS: true });
+            holder.innerHTML = '';
+            return canvas.toDataURL('image/png');
+        }
+
+        async function generateExamCoverPdf(examId) {
+            const item = loadedExams.find(x => x.id === examId);
+            if (!item) { triggerToast('ไม่พบข้อมูลข้อสอบที่เลือก', 'danger'); return; }
+            if (!item.exam_file_url) { triggerToast('ไม่พบไฟล์ข้อสอบสำหรับรายการนี้', 'danger'); return; }
+
+            // เปิดแท็บใหม่ทันทีในจังหวะที่ผู้ใช้คลิก เพื่อป้องกันการถูกบล็อกโดย popup blocker
+            const newTab = window.open('', '_blank');
+            if (newTab) {
+                newTab.document.write(`
+                    <!DOCTYPE html><html><head><meta charset="UTF-8"><title>กำลังเตรียมไฟล์ข้อสอบ...</title></head>
+                    <body style="font-family:sans-serif; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; background:#0f172a; color:#e2e8f0;">
+                        <p>กำลังสร้างไฟล์ข้อสอบ กรุณารอสักครู่...</p>
+                    </body></html>
+                `);
+                newTab.document.close();
+            }
+
+            toggleLoader(true);
+            try {
+                const coverDataUrl = await buildExamCoverImageDataUrl(item);
+
+                const examResponse = await fetch(item.exam_file_url);
+                if (!examResponse.ok) throw new Error('ไม่สามารถดึงไฟล์ข้อสอบต้นฉบับได้');
+                const examBytes = await examResponse.arrayBuffer();
+
+                const { PDFDocument } = PDFLib;
+                const mergedPdf = await PDFDocument.create();
+
+                const A4_WIDTH = 595.28;
+                const A4_HEIGHT = 841.89;
+
+                // หน้าที่ 1: หน้าปกข้อมูลข้อสอบ
+                const coverPage = mergedPdf.addPage([A4_WIDTH, A4_HEIGHT]);
+                const coverImage = await mergedPdf.embedPng(coverDataUrl);
+                coverPage.drawImage(coverImage, { x: 0, y: 0, width: A4_WIDTH, height: A4_HEIGHT });
+
+                // หน้าที่ 2 เป็นต้นไป: ไฟล์ข้อสอบจริง
+                const sourcePdf = await PDFDocument.load(examBytes, { ignoreEncryption: true });
+                const copiedPages = await mergedPdf.copyPages(sourcePdf, sourcePdf.getPageIndices());
+                copiedPages.forEach((p) => mergedPdf.addPage(p));
+
+                const mergedBytes = await mergedPdf.save();
+                const blob = new Blob([mergedBytes], { type: 'application/pdf' });
+                const blobUrl = URL.createObjectURL(blob);
+
+                if (newTab && !newTab.closed) {
+                    newTab.location.href = blobUrl;
+                } else {
+                    window.open(blobUrl, '_blank');
+                }
+            } catch (err) {
+                console.error(err);
+                triggerToast('เกิดข้อผิดพลาดในการสร้างไฟล์ PDF: ' + err.message, 'danger');
+                if (newTab && !newTab.closed) newTab.close();
+            } finally {
+                toggleLoader(false);
+            }
+        }
+
         async function syncSystemData() {
             try {
                 loadedUsers = await coreStorageEngine.fetch('system_users?order=id.asc');
@@ -689,6 +828,35 @@
             }
         }
 
+        function renderIndicatorsPage() {
+            const container = document.getElementById('indicators-container');
+            if (!container) return;
+
+            container.innerHTML = `
+                <div class="bg-white p-4 md:p-5 rounded-2xl shadow-xs border border-blue-100/60">
+                    <h2 class="text-sm md:text-base font-bold text-slate-700">สรุปตัวชี้วัดระหว่างทาง และตัวชี้วัดปลายทาง</h2>
+                    <p class="text-xs text-slate-500 mt-1">เลือกกลุ่มสาระการเรียนรู้เพื่อเปิดเอกสารตัวชี้วัดระหว่างทาง และตัวชี้วัดปลายทาง</p>
+                </div>
+                ${indicatorGroups.map(group => `
+                    <div class="bg-white p-4 md:p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="folder-open" class="w-4 h-4 text-blue-700"></i>
+                            <h3 class="text-xs md:text-sm font-bold text-slate-700">${group.name}</h3>
+                        </div>
+                        <div class="flex flex-col sm:flex-row gap-2.5">
+                            <a href="${group.word}" target="_blank" rel="noopener" class="flex-1 inline-flex items-center gap-2 px-3.5 py-2.5 text-xs font-semibold bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-xl transition">
+                                <i data-lucide="file-text" class="w-4 h-4"></i> [Word] ตัวชี้วัดระหว่างทาง และตัวชี้วัดปลายทาง
+                            </a>
+                            <a href="${group.pdf}" target="_blank" rel="noopener" class="flex-1 inline-flex items-center gap-2 px-3.5 py-2.5 text-xs font-semibold bg-red-50 hover:bg-red-100 text-red-700 rounded-xl transition">
+                                <i data-lucide="file-type" class="w-4 h-4"></i> [PDF] ตัวชี้วัดระหว่างทาง และตัวชี้วัดปลายทาง
+                            </a>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+            lucide.createIcons();
+        }
+
         function switchPage(target) {
             activePage = target;
             document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
@@ -697,6 +865,7 @@
                 'landing': { title: '', icon: 'home' },
                 'dashboard': { title: 'แดชบอร์ดข้อมูลสารสนเทศผู้บริหาร', icon: 'pie-chart' },
                 'archive': { title: 'คลังข้อสอบแยกตามกลุ่มสาระการเรียนรู้', icon: 'archive' },
+                'indicators': { title: 'สรุปตัวชี้วัดระหว่างทาง และตัวชี้วัดปลายทาง', icon: 'file-bar-chart' },
                 'exams': { title: 'ระบบจัดการและจัดเก็บข้อสอบโรงเรียน', icon: 'file-text' },
                 'exam-form': { title: document.getElementById('form-exam-id').value ? 'แก้ไขข้อมูลข้อสอบ' : 'อัปโหลดไฟล์เอกสารข้อสอบใหม่', icon: 'file-up' },
                 'users': { title: 'จัดการผู้ใช้งานและความปลอดภัย', icon: 'users' }
@@ -756,14 +925,15 @@
             const role = globalSession.role;
             const desktopMenu = document.getElementById('desktop-menu-list');
             const bottomNav = document.getElementById('mobile-bottom-nav');
+            const mainContentArea = document.getElementById('main-content-area');
             
             let links = [];
             if (role !== 'Guest') {
                 links.push({ id: 'dashboard', label: 'แดชบอร์ด', icon: 'pie-chart' });
                 links.push({ id: 'archive', label: 'คลังข้อสอบ', icon: 'archive' });
                 links.push({ id: 'exams', label: 'จัดการข้อสอบ', icon: 'file-text' });
-                // เพิ่มลิงก์เมนู "สรุปตัวชี้วัด" แบบระบุ URL ภายนอก คั่นระหว่าง จัดการข้อสอบ และ ตั้งค่าผู้ใช้
-                links.push({ id: 'indicators', label: 'สรุปตัวชี้วัด', icon: 'file-bar-chart', externalUrl: 'https://drive.google.com/drive/u/0/folders/1mk-33lkqVngRF1yXrR39fhXH6rrVxADg' });
+                // เมนู "สรุปตัวชี้วัด" แสดงหน้าสรุปตัวชี้วัดระหว่างทาง และตัวชี้วัดปลายทาง ภายในระบบ
+                links.push({ id: 'indicators', label: 'สรุปตัวชี้วัด', icon: 'file-bar-chart' });
                 links.push({ id: 'users', label: 'ตั้งค่าผู้ใช้', icon: 'users' });
             } else {
                 links.push({ id: 'landing', label: 'หน้าแรก', icon: 'home' });
@@ -785,22 +955,38 @@
                 `;
             }).join('');
 
-            bottomNav.innerHTML = links.map(lnk => {
-                if (lnk.externalUrl) {
+            // เมนูแถบล่างบนมือถือ: แสดงเฉพาะผู้ที่เข้าสู่ระบบแล้ว (Teacher/Admin)
+            // ซ่อนแถบเมนูทั้งหมดสำหรับผู้เยี่ยมชม (Guest) เพื่อไม่ให้แสดง "หน้าแรก" และ "คลังข้อสอบสาธารณะ"
+            if (role === 'Guest') {
+                bottomNav.innerHTML = '';
+                bottomNav.classList.add('hidden');
+                if (mainContentArea) {
+                    mainContentArea.classList.remove('pb-24');
+                    mainContentArea.classList.add('pb-8');
+                }
+            } else {
+                bottomNav.classList.remove('hidden');
+                if (mainContentArea) {
+                    mainContentArea.classList.remove('pb-8');
+                    mainContentArea.classList.add('pb-24');
+                }
+                bottomNav.innerHTML = links.map(lnk => {
+                    if (lnk.externalUrl) {
+                        return `
+                            <a href="${lnk.externalUrl}" target="_blank" class="flex flex-col items-center justify-center text-slate-500 flex-1">
+                                <i data-lucide="${lnk.icon}" class="w-4 h-4"></i>
+                                <span class="text-[9px] font-medium mt-0.5">${lnk.label}</span>
+                            </a>
+                        `;
+                    }
                     return `
-                        <a href="${lnk.externalUrl}" target="_blank" class="flex flex-col items-center justify-center text-slate-500 flex-1">
+                        <button onclick="switchPage('${lnk.id}')" class="flex flex-col items-center justify-center text-slate-500 flex-1 ${activePage === lnk.id ? 'text-blue-700' : ''}">
                             <i data-lucide="${lnk.icon}" class="w-4 h-4"></i>
                             <span class="text-[9px] font-medium mt-0.5">${lnk.label}</span>
-                        </a>
+                        </button>
                     `;
-                }
-                return `
-                    <button onclick="switchPage('${lnk.id}')" class="flex flex-col items-center justify-center text-slate-500 flex-1 ${activePage === lnk.id ? 'text-blue-700' : ''}">
-                        <i data-lucide="${lnk.icon}" class="w-4 h-4"></i>
-                        <span class="text-[9px] font-medium mt-0.5">${lnk.label}</span>
-                    </button>
-                `;
-            }).join('');
+                }).join('');
+            }
         }
 
         function renderArchiveTables() {
@@ -847,9 +1033,9 @@
                                 <td class="p-4 text-xs text-slate-500 font-medium">${operatorDisplayName}</td>
                                 <td class="p-4">
                                     <div class="flex flex-wrap gap-2">
-                                        <a href="${item.exam_file_url}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-lg transition">
+                                        <button type="button" onclick="generateExamCoverPdf(${item.id})" class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-blue-50 hover:bg-blue-100 text-blue-800 rounded-lg transition cursor-pointer">
                                             <i data-lucide="file" class="w-3 h-3"></i> ข้อสอบ
-                                        </a>
+                                        </button>
                                         <a href="${item.answer_file_url}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg transition">
                                             <i data-lucide="file-check" class="w-3 h-3"></i> เฉลย
                                         </a>
@@ -1339,6 +1525,7 @@
 
         window.addEventListener('DOMContentLoaded', async () => {
             switchPage('landing');
+            renderIndicatorsPage();
             await syncSystemData();
             lucide.createIcons();
         });
