@@ -15,13 +15,13 @@
     <style>
         body {
             font-family: 'Kanit', sans-serif;
-            background-color: #f0f4f8;
+            background-color: #eaf4fd;
         }
         .glass-nav {
-            background: rgba(255, 255, 255, 0.8);
+            background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(147, 197, 253, 0.4);
+            border-bottom: 1px solid rgba(37, 99, 235, 0.35);
         }
         .fade-in { animation: fadeIn 0.3s ease-out forwards; }
         .slide-up { animation: slideUp 0.4s ease-out forwards; }
@@ -92,16 +92,16 @@
                     <img src="https://jedzadakorn.github.io/ItemBank/images/logo.png" alt="School Logo" class="w-full h-full object-contain">
                 </div>
                 <div class="flex flex-col">
-                    <span class="text-[10px] font-bold tracking-wider text-blue-700 uppercase leading-none">ระบบคลังข้อสอบออนไลน์</span>
-                    <h1 class="text-sm font-bold text-slate-800 mt-0.5">โรงเรียนทนาพรวิทยา</h1>
+                    <span class="text-[10px] font-bold tracking-wider text-blue-200 uppercase leading-none">ระบบคลังข้อสอบออนไลน์</span>
+                    <h1 class="text-sm font-bold text-white mt-0.5">โรงเรียนทนาพรวิทยา</h1>
                 </div>
             </div>
-            <div class="hidden md:flex items-center gap-1 bg-slate-500/5 p-1 rounded-xl border border-blue-100/30" id="desktop-menu-list"></div>
+            <div class="hidden md:flex items-center gap-1 bg-blue-100/60 p-1 rounded-xl border border-blue-200/70" id="desktop-menu-list"></div>
             <div class="flex items-center gap-3">
                 <div id="nav-user-card" class="hidden items-center px-3 py-1 bg-blue-50/60 rounded-xl border border-blue-200/40">
                     <div class="text-left">
-                        <p class="text-xs font-semibold text-slate-800 leading-none truncate max-w-[120px]" id="nav-user-name">Guest</p>
-                        <p class="text-[9px] text-blue-700 font-bold uppercase mt-0.5" id="nav-user-role">VIEWER</p>
+                        <p class="text-xs font-semibold text-slate-800 leading-none truncate max-w-[150px]" id="nav-user-name">Guest</p>
+                        <p class="text-[9px] text-blue-700 font-bold mt-0.5 tabular-nums" id="nav-user-datetime">--/--/---- --:--:--</p>
                     </div>
                 </div>
                 <button id="btn-top-auth" onclick="switchPage('landing')" class="flex items-center gap-2 px-4 py-1.5 text-xs font-bold text-white bg-blue-700 hover:bg-blue-800 rounded-xl transition shadow-xs cursor-pointer">
@@ -222,96 +222,96 @@
             <section id="page-dashboard" class="view-section max-w-7xl w-full mx-auto px-4 md:px-8 py-6 fade-in hidden flex flex-col gap-8">
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-blue-100/70 flex items-center justify-between">
+                    <div class="bg-gradient-to-br from-white to-blue-50 p-5 rounded-2xl shadow-xs border border-blue-200/80 flex items-center justify-between">
                         <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-700 shadow-3xs">
+                            <div class="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-xs">
                                 <i data-lucide="file-text" class="w-7 h-7"></i>
                             </div>
                             <div class="flex flex-col">
-                                <p class="text-xs font-medium text-slate-400">จำนวนข้อสอบทั้งหมด</p>
-                                <h3 id="stat-total-exams" class="text-2xl font-bold text-slate-800 mt-0.5">0 <span class="text-xs font-normal text-slate-500 ml-1">ข้อ</span></h3>
+                                <p class="text-xs font-medium text-blue-900/60">จำนวนข้อสอบทั้งหมด</p>
+                                <h3 id="stat-total-exams" class="text-2xl font-bold text-blue-950 mt-0.5">0 <span class="text-xs font-normal text-blue-800/70 ml-1">ข้อ</span></h3>
                                 <p class="text-[10px] text-blue-700 font-medium mt-1 flex items-center gap-1"><i data-lucide="trending-up" class="w-3 h-3"></i> เพิ่มขึ้นต่อเนื่อง</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-blue-100/70 flex items-center justify-between">
+                    <div class="bg-gradient-to-br from-white to-sky-50 p-5 rounded-2xl shadow-xs border border-blue-200/80 flex items-center justify-between">
                         <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 bg-sky-50 rounded-2xl flex items-center justify-center text-sky-700 shadow-3xs">
+                            <div class="w-14 h-14 bg-sky-500 rounded-2xl flex items-center justify-center text-white shadow-xs">
                                 <i data-lucide="book-open" class="w-7 h-7"></i>
                             </div>
                             <div class="flex flex-col">
-                                <p class="text-xs font-medium text-slate-400">กลุ่มสาระการเรียนรู้</p>
-                                <h3 class="text-2xl font-bold text-slate-800 mt-0.5">8 <span class="text-xs font-normal text-slate-500 ml-1">กลุ่มสาระ</span></h3>
-                                <p class="text-[10px] text-slate-400 font-medium mt-1">ครอบคลุมทุกกลุ่มสาระการเรียนรู้</p>
+                                <p class="text-xs font-medium text-blue-900/60">กลุ่มสาระการเรียนรู้</p>
+                                <h3 class="text-2xl font-bold text-blue-950 mt-0.5">8 <span class="text-xs font-normal text-blue-800/70 ml-1">กลุ่มสาระ</span></h3>
+                                <p class="text-[10px] text-blue-700/70 font-medium mt-1">ครอบคลุมทุกกลุ่มสาระการเรียนรู้</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-white p-5 rounded-2xl shadow-xs border border-blue-100/70 flex items-center justify-between">
+                    <div class="bg-gradient-to-br from-white to-cyan-50 p-5 rounded-2xl shadow-xs border border-blue-200/80 flex items-center justify-between">
                         <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 shadow-3xs">
+                            <div class="w-14 h-14 bg-cyan-500 rounded-2xl flex items-center justify-center text-white shadow-xs">
                                 <i data-lucide="graduation-cap" class="w-7 h-7"></i>
                             </div>
                             <div class="flex flex-col">
-                                <p class="text-xs font-medium text-slate-400">ระดับชั้น</p>
-                                <h3 class="text-2xl font-bold text-slate-800 mt-0.5">9 <span class="text-xs font-normal text-slate-500 ml-1">ระดับชั้น</span></h3>
-                                <p class="text-[10px] text-slate-400 font-medium mt-1">ตั้งแต่ ป.1 ถึง ม.3</p>
+                                <p class="text-xs font-medium text-blue-900/60">ระดับชั้น</p>
+                                <h3 class="text-2xl font-bold text-blue-950 mt-0.5">9 <span class="text-xs font-normal text-blue-800/70 ml-1">ระดับชั้น</span></h3>
+                                <p class="text-[10px] text-blue-700/70 font-medium mt-1">ตั้งแต่ ป.1 ถึง ม.3</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-4">
-                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                <div class="bg-white p-6 rounded-2xl shadow-xs border border-blue-100 flex flex-col gap-4">
+                    <h4 class="text-xs font-bold text-blue-900/70 uppercase tracking-wider flex items-center gap-2">
                         <i data-lucide="book-open" class="w-4 h-4 text-blue-700"></i> จำนวนข้อสอบ จำแนกตามกลุ่มสาระการเรียนรู้
                     </h4>
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="dashboard-subject-grid"></div>
                 </div>
 
-                <div class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-4">
-                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                <div class="bg-white p-6 rounded-2xl shadow-xs border border-blue-100 flex flex-col gap-4">
+                    <h4 class="text-xs font-bold text-blue-900/70 uppercase tracking-wider flex items-center gap-2">
                         <i data-lucide="layers" class="w-4 h-4 text-sky-700"></i> จำนวนข้อสอบ จำแนกตามระดับชั้น
                     </h4>
                     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" id="dashboard-grade-grid"></div>
                 </div>
 
                 <div class="flex flex-col gap-4 mt-2">
-                    <h3 class="text-base font-bold text-slate-800 border-l-4 border-blue-700 pl-3 py-0.5 tracking-wide">
+                    <h3 class="text-base font-bold text-blue-950 border-l-4 border-blue-700 pl-3 py-0.5 tracking-wide">
                         จำนวนข้อสอบ 8 กลุ่มสาระการเรียนรู้ จำแนกตามระดับชั้น
                     </h3>
                     
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3">
-                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-pink-400"></span> กลุ่มสาระการเรียนรู้ภาษาไทย</h3>
+                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-blue-100 flex flex-col gap-3">
+                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-900"></span> กลุ่มสาระการเรียนรู้ภาษาไทย</h3>
                             <div class="relative h-48"><canvas id="chart-thai"></canvas></div>
                         </div>
-                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3">
-                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-600"></span> กลุ่มสาระการเรียนรู้คณิตศาสตร์</h3>
+                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-blue-100 flex flex-col gap-3">
+                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-700"></span> กลุ่มสาระการเรียนรู้คณิตศาสตร์</h3>
                             <div class="relative h-48"><canvas id="chart-math"></canvas></div>
                         </div>
-                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3">
-                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี</h3>
+                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-blue-100 flex flex-col gap-3">
+                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-600"></span> กลุ่มสาระการเรียนรู้วิทยาศาสตร์และเทคโนโลยี</h3>
                             <div class="relative h-48"><canvas id="chart-science"></canvas></div>
                         </div>
-                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3">
-                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-amber-500"></span> กลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนา และวัฒนธรรม</h3>
+                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-blue-100 flex flex-col gap-3">
+                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-500"></span> กลุ่มสาระการเรียนรู้สังคมศึกษา ศาสนา และวัฒนธรรม</h3>
                             <div class="relative h-48"><canvas id="chart-social"></canvas></div>
                         </div>
-                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3">
+                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-blue-100 flex flex-col gap-3">
                             <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-sky-500"></span> กลุ่มสาระการเรียนรู้สุขศึกษาและพลศึกษา</h3>
                             <div class="relative h-48"><canvas id="chart-health"></canvas></div>
                         </div>
-                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3">
-                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-purple-400"></span> กลุ่มสาระการเรียนรู้ศิลปะ</h3>
+                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-blue-100 flex flex-col gap-3">
+                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-sky-400"></span> กลุ่มสาระการเรียนรู้ศิลปะ</h3>
                             <div class="relative h-48"><canvas id="chart-art"></canvas></div>
                         </div>
-                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3">
-                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-yellow-600"></span> กลุ่มสาระการเรียนรู้การงานอาชีพ</h3>
+                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-blue-100 flex flex-col gap-3">
+                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-sky-300"></span> กลุ่มสาระการเรียนรู้การงานอาชีพ</h3>
                             <div class="relative h-48"><canvas id="chart-work"></canvas></div>
                         </div>
-                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3">
-                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-sky-500"></span> กลุ่มสาระการเรียนรู้ภาษาต่างประเทศ</h3>
+                        <div class="bg-white p-5 rounded-2xl shadow-xs border border-blue-100 flex flex-col gap-3">
+                            <h3 class="text-xs font-bold text-slate-700 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-blue-300"></span> กลุ่มสาระการเรียนรู้ภาษาต่างประเทศ</h3>
                             <div class="relative h-48"><canvas id="chart-foreign"></canvas></div>
                         </div>
                     </div>
@@ -399,11 +399,11 @@
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden flex flex-col">
-                    <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wide">รายการเอกสารข้อสอบทั้งหมด</span>
+                <div class="bg-white rounded-2xl shadow-xs border border-blue-100 overflow-hidden flex flex-col">
+                    <div class="p-4 border-b border-blue-100 flex justify-between items-center bg-blue-50/70">
+                        <span class="text-xs font-bold text-blue-900/70 uppercase tracking-wide">รายการเอกสารข้อสอบทั้งหมด</span>
                         <div class="flex gap-2">
-                            <button onclick="exportExamsToCSV()" class="flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition cursor-pointer">
+                            <button onclick="exportExamsToCSV()" class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-800 text-xs font-semibold rounded-xl transition cursor-pointer border border-blue-200">
                                 <i data-lucide="download" class="w-3.5 h-3.5"></i> ส่งออกข้อมูล (CSV)
                             </button>
                             <button id="btn-add-exam-trigger" onclick="openExamForm()" class="flex items-center gap-1.5 px-3 py-1.5 bg-blue-700 hover:bg-blue-800 text-white text-xs font-semibold rounded-xl transition shadow-xs hidden cursor-pointer">
@@ -414,7 +414,7 @@
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="bg-slate-50/70 border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                <tr class="bg-gradient-to-r from-blue-600 to-sky-500 text-[11px] font-bold text-white uppercase tracking-wider">
                                     <th class="p-4">ปีการศึกษา / รหัสวิชา</th>
                                     <th class="p-4">ชื่อรายวิชา / ระดับชั้น</th>
                                     <th class="p-4">กลุ่มสาระฯ</th>
@@ -424,7 +424,7 @@
                                     <th class="p-4 text-right">การจัดการ</th>
                                 </tr>
                             </thead>
-                            <tbody id="table-exams-body" class="divide-y divide-slate-100 text-sm"></tbody>
+                            <tbody id="table-exams-body" class="divide-y divide-blue-50 text-sm"></tbody>
                         </table>
                     </div>
                 </div>
@@ -545,7 +545,7 @@
                     </div>
                 </div>
 
-                <div id="admin-user-management-box" class="bg-white p-6 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-4 hidden">
+                <div id="admin-user-management-box" class="bg-white p-6 rounded-2xl shadow-xs border border-blue-100 flex flex-col gap-4 hidden">
                     <div class="flex justify-between items-center">
                         <div class="flex flex-col">
                             <h3 class="text-base font-bold text-slate-800">จัดการข้อมูลผู้ใช้งานระบบทั้งหมด</h3>
@@ -558,7 +558,7 @@
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                <tr class="bg-gradient-to-r from-blue-600 to-sky-500 text-[11px] font-bold text-white uppercase tracking-wider">
                                     <th class="p-4">ชื่อผู้ใช้ (Username)</th>
                                     <th class="p-4">ชื่อ-นามสกุลจริง</th>
                                     <th class="p-4">สิทธิ์การเข้าถึง</th>
@@ -566,7 +566,7 @@
                                     <th class="p-4 text-right">การจัดการ</th>
                                 </tr>
                             </thead>
-                            <tbody id="table-users-body" class="divide-y divide-slate-100"></tbody>
+                            <tbody id="table-users-body" class="divide-y divide-blue-50"></tbody>
                         </table>
                     </div>
                 </div>
@@ -574,13 +574,13 @@
         </div>
     </main>
 
-    <footer class="bg-white border-t border-blue-100 py-4 mt-auto text-center px-4">
-        <p class="text-xs md:text-sm text-slate-500 font-medium tracking-wide">
+    <footer style="background: linear-gradient(90deg, #2563eb 0%, #0ea5e9 100%);" class="border-t border-blue-700/20 py-4 mt-auto text-center px-4">
+        <p class="text-xs md:text-sm text-white font-medium tracking-wide">
             &copy; 2026 โรงเรียนทนาพรวิทยา. ระบบคลังข้อสอบออนไลน์ พัฒนาโดย นายเจษฎากร เชิดฉาย
         </p>
     </footer>
 
-    <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 inset-x-0 bg-white border-t border-slate-200 h-16 flex items-center justify-around px-4 z-50 shadow-lg"></nav>
+    <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 inset-x-0 bg-blue-50 border-t border-blue-200 h-16 flex items-center justify-around px-4 z-50 shadow-lg"></nav>
 
     <script>
         const CLIENT_URL = "https://iajnykwfhcrfdejzlcxj.supabase.co"; 
@@ -653,14 +653,14 @@
 
         // ปรับแต่ง Brand ชุดสีโทนฟ้าน้ำทะเล/ฟ้าพาสเทล ให้กลมกลืนตามภาพรวมระบบ
         const subjectBrandingMap = {
-            "ภาษาไทย": { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200", indicator: "bg-pink-400", label: "ก" },
-            "คณิตศาสตร์": { bg: "bg-blue-50", text: "text-blue-800", border: "border-blue-200", indicator: "bg-blue-600", label: "+-×÷" },
-            "วิทยาศาสตร์และเทคโนโลยี": { bg: "bg-sky-50", text: "text-sky-700", border: "border-sky-200", indicator: "bg-emerald-500", icon: "beaker" },
-            "สังคมศึกษา ศาสนา และวัฒนธรรม": { bg: "bg-sky-50", text: "text-sky-700", border: "border-sky-200", indicator: "bg-amber-500", icon: "landmark" },
+            "ภาษาไทย": { bg: "bg-blue-50", text: "text-blue-900", border: "border-blue-200", indicator: "bg-blue-900", label: "ก" },
+            "คณิตศาสตร์": { bg: "bg-blue-50", text: "text-blue-800", border: "border-blue-200", indicator: "bg-blue-700", label: "+-×÷" },
+            "วิทยาศาสตร์และเทคโนโลยี": { bg: "bg-sky-50", text: "text-blue-700", border: "border-sky-200", indicator: "bg-blue-600", icon: "beaker" },
+            "สังคมศึกษา ศาสนา และวัฒนธรรม": { bg: "bg-sky-50", text: "text-blue-700", border: "border-sky-200", indicator: "bg-blue-500", icon: "landmark" },
             "สุขศึกษาและพลศึกษา": { bg: "bg-blue-50", text: "text-sky-800", border: "border-blue-200", indicator: "bg-sky-500", icon: "heart-pulse" },
-            "ศิลปะ": { bg: "bg-sky-50", text: "text-blue-700", border: "border-sky-200", indicator: "bg-purple-400", icon: "palette" },
-            "การงานอาชีพ": { bg: "bg-slate-50", text: "text-slate-700", border: "border-slate-200", indicator: "bg-yellow-600", icon: "briefcase" },
-            "ภาษาต่างประเทศ": { bg: "bg-sky-50", text: "text-sky-600", border: "border-sky-200", indicator: "bg-sky-500", label: "EN" }
+            "ศิลปะ": { bg: "bg-sky-50", text: "text-sky-700", border: "border-sky-200", indicator: "bg-sky-400", icon: "palette" },
+            "การงานอาชีพ": { bg: "bg-sky-50", text: "text-sky-700", border: "border-sky-200", indicator: "bg-sky-300", icon: "briefcase" },
+            "ภาษาต่างประเทศ": { bg: "bg-sky-50", text: "text-sky-600", border: "border-sky-200", indicator: "bg-blue-300", label: "EN" }
         };
 
         const gradesList = [
@@ -688,6 +688,20 @@
 
         function toggleLoader(show = false) {
             document.getElementById('global-loader').classList.toggle('hidden', !show);
+        }
+
+        function updateNavDateTime() {
+            const el = document.getElementById('nav-user-datetime');
+            if (!el) return;
+            const now = new Date();
+            const pad = (n) => String(n).padStart(2, '0');
+            const dd = pad(now.getDate());
+            const mm = pad(now.getMonth() + 1);
+            const yyyy = now.getFullYear() + 543;
+            const hh = pad(now.getHours());
+            const min = pad(now.getMinutes());
+            const ss = pad(now.getSeconds());
+            el.textContent = `${dd}/${mm}/${yyyy} ${hh}:${min}:${ss}`;
         }
 
         function toggleModal(id, show = false) {
@@ -838,7 +852,7 @@
                     <p class="text-xs text-slate-500 mt-1">เลือกกลุ่มสาระการเรียนรู้เพื่อเปิดเอกสารตัวชี้วัดระหว่างทาง และตัวชี้วัดปลายทาง</p>
                 </div>
                 ${indicatorGroups.map(group => `
-                    <div class="bg-white p-4 md:p-5 rounded-2xl shadow-xs border border-slate-200 flex flex-col gap-3">
+                    <div class="bg-white p-4 md:p-5 rounded-2xl shadow-xs border border-blue-100 flex flex-col gap-3">
                         <div class="flex items-center gap-2">
                             <i data-lucide="folder-open" class="w-4 h-4 text-blue-700"></i>
                             <h3 class="text-xs md:text-sm font-bold text-slate-700">${group.name}</h3>
@@ -909,7 +923,7 @@
             } else {
                 btnAuth.innerHTML = `<i data-lucide="log-out" class="w-3.5 h-3.5"></i> ออกจากระบบ`;
                 btnAuth.setAttribute('onclick', "toggleModal('logout-modal', true)");
-                btnAuth.className = "flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-700/5 rounded-xl transition border border-red-200/50 cursor-pointer";
+                btnAuth.className = "flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-white hover:bg-white/10 rounded-xl transition border border-white/30 cursor-pointer";
                 userCard.classList.remove('hidden');
                 userCard.classList.add('flex');
             }
@@ -1021,7 +1035,7 @@
                         const shortenedGrade = gradeShortenerMap[item.grade_level] || item.grade_level;
 
                         return `
-                            <tr class="hover:bg-slate-50 transition text-sm">
+                            <tr class="hover:bg-blue-50/60 transition text-sm">
                                 <td class="p-4 font-bold text-slate-700">${shortenedGrade}</td>
                                 <td class="p-4">
                                     <span class="text-xs font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded mr-1">${item.subject_code}</span>
@@ -1049,15 +1063,15 @@
                 const brand = subjectBrandingMap[groupName] || { indicator: "bg-slate-500" };
 
                 htmlOutput += `
-                    <div class="bg-white rounded-2xl shadow-xs border border-slate-200 overflow-hidden flex flex-col fade-in">
-                        <div class="p-4 border-b border-slate-100 bg-slate-50/50 flex items-center gap-2">
+                    <div class="bg-white rounded-2xl shadow-xs border border-blue-100 overflow-hidden flex flex-col fade-in">
+                        <div class="p-4 border-b border-blue-100 bg-blue-50/70 flex items-center gap-2">
                             <span class="w-2.5 h-2.5 rounded-full ${brand.indicator}"></span>
                             <h3 class="text-sm font-bold text-slate-800">กลุ่มสาระการเรียนรู้${groupName}</h3>
                         </div>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse">
                                 <thead>
-                                    <tr class="bg-slate-50/40 border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                                    <tr class="bg-gradient-to-r from-blue-600 to-sky-500 text-[11px] font-bold text-white uppercase tracking-wider">
                                         <th class="p-4 w-24">ระดับชั้น</th>
                                         <th class="p-4">ชื่อรายวิชา</th>
                                         <th class="p-4">ตัวชี้วัดปลายทาง</th>
@@ -1067,7 +1081,7 @@
                                         <th class="p-4">ดาวน์โหลดข้อสอบและเฉลย</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-slate-100">
+                                <tbody class="divide-y divide-blue-50">
                                     ${tableRows}
                                 </tbody>
                             </table>
@@ -1094,7 +1108,6 @@
                     globalSession.role = userData.role;
 
                     document.getElementById('nav-user-name').innerText = userData.full_name;
-                    document.getElementById('nav-user-role').innerText = userData.role === 'Admin' ? 'ADMIN' : 'TEACHER';
                     
                     triggerToast(`เข้าสู่ระบบสำเร็จ! ยินดีต้อนรับคุณ ${userData.full_name}`, 'success');
                     document.getElementById('form-login').reset();
@@ -1211,7 +1224,7 @@
             if (!loadedUsers || loadedUsers.length === 0) return;
             if (tbody) {
                 tbody.innerHTML = loadedUsers.map(u => `
-                    <tr class="hover:bg-slate-50 transition">
+                    <tr class="hover:bg-blue-50/60 transition">
                         <td class="p-4 font-bold text-slate-700">${u.username}</td>
                         <td class="p-4 text-slate-600">${u.full_name}</td>
                         <td class="p-4"><span class="px-2.5 py-1 text-xs font-bold rounded-full ${u.role === 'Admin' ? 'bg-blue-50 text-blue-800':'bg-slate-100 text-slate-700'}">${u.role}</span></td>
@@ -1266,7 +1279,7 @@
                 if (displayYear < 2400) displayYear = displayYear + 543;
 
                 return `
-                    <tr class="hover:bg-slate-50/80 transition">
+                    <tr class="hover:bg-blue-50/60 transition">
                         <td class="p-4">
                             <span class="text-xs font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md">ปี ${displayYear}</span>
                             <div class="font-bold text-slate-700 mt-1">${item.subject_code}</div>
@@ -1450,7 +1463,7 @@
                     const engShort = grade.includes('ประถม') ? `P.${shortName.replace('ป.', '')}` : `M.${shortName.replace('ม.', '')}`;
                     
                     return `
-                        <div class="bg-white p-3 rounded-xl border border-slate-200/80 flex flex-col justify-between h-20 transition hover:border-blue-200">
+                        <div class="bg-white p-3 rounded-xl border border-blue-100 flex flex-col justify-between h-20 transition hover:border-blue-300">
                             <div class="flex justify-between items-start">
                                 <span class="text-[11px] font-semibold text-slate-500 leading-none">${shortName}</span>
                                 <span class="text-[11px] font-bold text-slate-200 uppercase tracking-wider leading-none">${engShort}</span>
@@ -1463,17 +1476,17 @@
                 gradeGrid.innerHTML = gradeHtml;
             }
 
-            // กราฟแท่งจัดชุดพาเลทสีโทนฟ้าน้ำทะเล/ฟ้าคราม (Teal Palette) ให้กลมกลืนแบบเรียบหรู
+            // กราฟแท่งจัดชุดพาเลทสีโทนฟ้าธรรมชาติ ไล่เฉดเข้ม-อ่อน ให้กลมกลืนเป็นธีมเดียวกันทั้งระบบ
             const shortGrades = ["ป.1", "ป.2", "ป.3", "ป.4", "ป.5", "ป.6", "ม.1", "ม.2", "ม.3"];
             const chartConfigs = [
-                { name: "ภาษาไทย", canvasId: "chart-thai", color: "#14b8a6" },
-                { name: "คณิตศาสตร์", canvasId: "chart-math", color: "#0d9488" },
-                { name: "วิทยาศาสตร์และเทคโนโลยี", canvasId: "chart-science", color: "#06b6d4" },
-                { name: "สังคมศึกษา ศาสนา และวัฒนธรรม", canvasId: "chart-social", color: "#0284c7" },
-                { name: "สุขศึกษาและพลศึกษา", canvasId: "chart-health", color: "#22d3ee" },
-                { name: "ศิลปะ", canvasId: "chart-art", color: "#0f766e" },
-                { name: "การงานอาชีพ", canvasId: "chart-work", color: "#64748b" },
-                { name: "ภาษาต่างประเทศ", canvasId: "chart-foreign", color: "#38bdf8" }
+                { name: "ภาษาไทย", canvasId: "chart-thai", color: "#1e3a8a" },
+                { name: "คณิตศาสตร์", canvasId: "chart-math", color: "#1d4ed8" },
+                { name: "วิทยาศาสตร์และเทคโนโลยี", canvasId: "chart-science", color: "#2563eb" },
+                { name: "สังคมศึกษา ศาสนา และวัฒนธรรม", canvasId: "chart-social", color: "#3b82f6" },
+                { name: "สุขศึกษาและพลศึกษา", canvasId: "chart-health", color: "#0ea5e9" },
+                { name: "ศิลปะ", canvasId: "chart-art", color: "#38bdf8" },
+                { name: "การงานอาชีพ", canvasId: "chart-work", color: "#7dd3fc" },
+                { name: "ภาษาต่างประเทศ", canvasId: "chart-foreign", color: "#93c5fd" }
             ];
 
             chartConfigs.forEach(config => {
@@ -1526,6 +1539,8 @@
         window.addEventListener('DOMContentLoaded', async () => {
             switchPage('landing');
             renderIndicatorsPage();
+            updateNavDateTime();
+            setInterval(updateNavDateTime, 1000);
             await syncSystemData();
             lucide.createIcons();
         });
